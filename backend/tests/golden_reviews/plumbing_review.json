@@ -1,0 +1,21 @@
+{
+  "case_id": "plumbing_review",
+  "fixture": "plumbing_analysis.json",
+  "review_profile": "general_construction_plan",
+  "must_status": {
+    "CR-001": "PASS",
+    "CR-002": "PASS",
+    "CR-003": "PASS",
+    "CR-005": "PASS",
+    "CR-006": "PASS",
+    "CR-007": "PASS",
+    "CR-008": "PARTIAL",
+    "CR-009": "NOT_APPLICABLE",
+    "CR-010": "PASS",
+    "CR-011": "PARTIAL",
+    "CR-012": "MISSING",
+    "CR-013": "NOT_APPLICABLE",
+    "CR-014": "NOT_APPLICABLE"
+  },
+  "score": {"equals": 82}
+}

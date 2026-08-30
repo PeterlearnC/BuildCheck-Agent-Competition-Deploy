@@ -1,0 +1,150 @@
+{
+  "schema_version": "competition-demo-manifest-v1",
+  "qualified_core_baseline": "7a0250a52f84fdd332775dacb2d5683877625f1a",
+  "standard": {
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "standard_code": "GB 55023-2022",
+    "canonical_standard_code": "GB55023-2022",
+    "source_sha256": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+    "qualified_pipeline_file_sha256": "e95c674ae63b5af9add9b5a2bca9e651f2517add674805fac629b73335fd1afd",
+    "qualified_parse_result_sha256": "52dce521d4b46db820ccfac9cdcc61bd83b78f3b808144eb5e29a1550114a717",
+    "qualified_article_count": 64,
+    "corpus_package_path": "competition/corpus/gb55023-qualified-parse-result.json",
+    "corpus_package_sha256": "9f8d0e9fa1bd257e5b0fb7a27465242a1b02c0a46cc366d3dd2016908cad596c"
+  },
+  "plans": [
+    {
+      "document_id": "f42886ef-83ec-454c-86e2-34d5c238ca0f",
+      "description": "山东汇金国际金融中心建设项目 — 贝雷梁高支模专项施工方案",
+      "pdf_sha256": "5f3ebde3bd2c0a6d6dccb516c3029fd336558e198ebeccad07d29ca0d03fd8dc"
+    },
+    {
+      "document_id": "4441b5a1-a167-4e26-9711-d90a8e85f71d",
+      "description": "经八纬一棚户区改造 A 区建设项目 — 悬挑脚手架工程专项施工方案",
+      "pdf_sha256": "b0f8c55d2f02b9c826dd1c8001a56582b470bd80ec5d5ad8368235dcb0058462"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "CASE-A",
+      "document_id": "f42886ef-83ec-454c-86e2-34d5c238ca0f",
+      "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+      "article_number": "4.4.15",
+      "request": {
+        "page_number": 17,
+        "source_text": "4.2 可调托撑螺杆外径不得小于36mm，可调托撑螺杆与螺母旋合长度不\n得少于5 扣，螺母厚度不小于30mm。插入立杆内的长度不得小于150mm。",
+        "char_start": 362,
+        "retrieval_query": "GB 55023-2022 4.4.15",
+        "standard_ids": [
+          "55023b3b-1b00-4000-8000-000000000001"
+        ],
+        "top_k": 5,
+        "evidence_id": "chunk_a62c9ad11c39e8cde40e2d2267393357e8a2ca0258cc0c98a85d7d3891e1d182",
+        "requirement": {
+          "char_start": 7,
+          "char_end": 44,
+          "source_text": "脚手架可调底座和可调托撑调节螺杆插入脚手架立杆内\n的长度不应小于150mm"
+        },
+        "plan_facts": [
+          {
+            "char_start": 67,
+            "char_end": 72,
+            "source_text": "150mm"
+          }
+        ]
+      },
+      "qualification_assertion": {
+        "expected_decision": "COMPLIANT",
+        "expected_reason_code": "NUMERIC_LIMIT_SATISFIED",
+        "expected_scope": "REVIEW_UNIT_REQUIREMENT",
+        "expected_finding_id": "finding_993e8847b86de084c9d1942a9771bf3dab07200260499f7d38d00292060e818b",
+        "expected_comparison_id": "comparison_0bc778afac8ca47a97fa790ff3b07485c9aa925bf7ed2ffed4f58dc17cecdd1c",
+        "expected_review_unit_id": "reviewunit_fd0c41486c65ebe9aba14bd63ca7028628cbd7d81b47ad75da48d8b57e32bb8b",
+        "expected_evidence_id": "chunk_a62c9ad11c39e8cde40e2d2267393357e8a2ca0258cc0c98a85d7d3891e1d182",
+        "expected_requirement_id": "requirement_a376631709d34bf8f12cbc3d4d65dfb4ae0a79be7984265016046a638a2f6423",
+        "expected_plan_fact_ids": [
+          "planfact_86d3871f820f82add2702a2c117ea00c9c9e4b5d58ecf2ce25a0ca3d6a53158e"
+        ],
+        "expected_article_id": "article_9ae26287cadee0b06f53f037eff78a8512db782842a95f8ad0cb356b1174dfb6"
+      }
+    },
+    {
+      "case_id": "CASE-B",
+      "document_id": "f42886ef-83ec-454c-86e2-34d5c238ca0f",
+      "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+      "article_number": "4.4.16",
+      "request": {
+        "page_number": 46,
+        "source_text": "2、立杆顶部设可调支托，U 形支托与楞梁两侧间隙，必须楔紧，其螺杆\n伸出钢管顶部不得大于200mm，螺杆外径与立杆钢管内径的间隙不大于3mm",
+        "char_start": 261,
+        "retrieval_query": "GB 55023-2022 4.4.16",
+        "standard_ids": [
+          "55023b3b-1b00-4000-8000-000000000001"
+        ],
+        "top_k": 5,
+        "evidence_id": "chunk_cbd44428d1a96c1552de429b6b90649bf2f655fce2ab49b5921169a0b964c306",
+        "requirement": {
+          "char_start": 0,
+          "char_end": 41,
+          "source_text": "4.4.16可调底座和可调托撑螺杆插人脚手架立杆钢管内的间隙\n不应大于2.5mm。"
+        },
+        "plan_facts": [
+          {
+            "char_start": 67,
+            "char_end": 70,
+            "source_text": "3mm"
+          }
+        ]
+      },
+      "qualification_assertion": {
+        "expected_decision": "NON_COMPLIANT",
+        "expected_reason_code": "NUMERIC_LIMIT_VIOLATED",
+        "expected_scope": "REVIEW_UNIT_REQUIREMENT",
+        "expected_finding_id": "finding_530869523a03ddacf658e167fcff74f5b32b68f324533711a0b38538298f0c73",
+        "expected_comparison_id": "comparison_e9e16d55e3fbb85dd1ca616d2d62e68d839635652aa709eaf119aaf563e30d18",
+        "expected_review_unit_id": "reviewunit_c9daee9f5999bcb2d51132a4198b5483ecc8268ce1561143695ac48d2796ab28",
+        "expected_evidence_id": "chunk_cbd44428d1a96c1552de429b6b90649bf2f655fce2ab49b5921169a0b964c306",
+        "expected_requirement_id": "requirement_964f842dc133071d1c013925fbdce12696737333fd4fdd434a7efe91716c5600",
+        "expected_plan_fact_ids": [
+          "planfact_54ba2be12019108c820ea611f7f7074147923f20d279236ca2bab4335f0c99ad"
+        ],
+        "expected_article_id": "article_3da2591de608763e1e4fb93f483364e5699928de3ed1517459c71fbb2088209d"
+      }
+    },
+    {
+      "case_id": "CASE-C",
+      "document_id": "4441b5a1-a167-4e26-9711-d90a8e85f71d",
+      "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+      "article_number": "4.4.15",
+      "request": {
+        "page_number": 23,
+        "source_text": "1、连墙件采用刚性连接，垂直间距为3.60m，水平间距为4.5m。",
+        "char_start": 322,
+        "retrieval_query": "GB 55023-2022 4.4.15",
+        "standard_ids": [
+          "55023b3b-1b00-4000-8000-000000000001"
+        ],
+        "top_k": 5,
+        "evidence_id": "chunk_a62c9ad11c39e8cde40e2d2267393357e8a2ca0258cc0c98a85d7d3891e1d182",
+        "requirement": {
+          "char_start": 0,
+          "char_end": 148,
+          "source_text": "4.4.15 脚手架可调底座和可调托撑调节螺杆插入脚手架立杆内\n的长度不应小于150mm，且调节螺杆伸出长度应经计算确定，\n并应符合下列规定：\n1 当插入的立杆钢管直径为 42mm 时，伸出长度不应大\n于200mm;\n2 当插入的立杆钢管直径为48.3mm及以上时，伸出长度\n不应大于500mm。"
+        },
+        "plan_facts": []
+      },
+      "qualification_assertion": {
+        "expected_decision": "INSUFFICIENT_INFORMATION",
+        "expected_reason_code": "REQUIREMENT_DECOMPOSITION_UNRESOLVED",
+        "expected_scope": "REVIEW_UNIT_REQUIREMENT",
+        "expected_finding_id": "finding_9c02ed3517c6826c4d1228f31140a0761183ade0e33000d70c9f6127f0faa408",
+        "expected_comparison_id": "comparison_18bbef76cfb38d706697742a6eb51175281177817e068a3bf1dba27b085ddf36",
+        "expected_review_unit_id": "reviewunit_fd93f37210dce77f1f104c99e0c689866ae2bd84c034f5e5d2abcc8c2c99dab7",
+        "expected_evidence_id": "chunk_a62c9ad11c39e8cde40e2d2267393357e8a2ca0258cc0c98a85d7d3891e1d182",
+        "expected_requirement_id": "requirement_00af548d7c047fe5f3d7916a02fc113bb14751e9f8645d4e29bd7016c0c5b797",
+        "expected_plan_fact_ids": [],
+        "expected_article_id": "article_9ae26287cadee0b06f53f037eff78a8512db782842a95f8ad0cb356b1174dfb6"
+      }
+    }
+  ]
+}

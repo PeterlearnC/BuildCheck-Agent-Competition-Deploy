@@ -1,0 +1,10 @@
+{
+  "chapter_numbers": ["6", "6.1"],
+  "article_numbers": ["6.1.1", "6.1.2", "6.1.3"],
+  "articles": {
+    "6.1.1": {"source_page_start": 3, "source_page_end": 3},
+    "6.1.2": {"source_page_start": 3, "source_page_end": 4},
+    "6.1.3": {"source_page_start": 4, "source_page_end": 4}
+  },
+  "must_not_articles": ["2024.10.01"]
+}

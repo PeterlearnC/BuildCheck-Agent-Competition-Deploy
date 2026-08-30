@@ -1,0 +1,1 @@
+"""BuildCheck-Agent backend application."""

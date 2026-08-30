@@ -1,0 +1,23 @@
+{
+  "case_id": "scaffold_review",
+  "fixture": "scaffold_analysis.json",
+  "review_profile": "special_construction_plan",
+  "must_status": {
+    "CR-001": "PASS",
+    "CR-002": "PASS",
+    "CR-003": "PARTIAL",
+    "CR-005": "PASS",
+    "CR-006": "PASS",
+    "CR-007": "PARTIAL",
+    "CR-008": "PASS",
+    "CR-009": "PASS",
+    "CR-010": "PASS",
+    "CR-011": "PASS",
+    "CR-013": "NOT_APPLICABLE",
+    "CR-014": "PASS"
+  },
+  "must_not_status": {
+    "CR-012": ["PASS"]
+  },
+  "score": {"equals": 77}
+}

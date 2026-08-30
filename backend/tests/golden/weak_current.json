@@ -1,0 +1,51 @@
+{
+  "case_id": "weak_current",
+  "fixture": "weak_current_pages.json",
+  "document_type": {"equals": "施工组织设计", "source_page": 1},
+  "engineering_category": {"equals": "安装工程"},
+  "specialty": {"equals": "智能化弱电工程"},
+  "project": {
+    "project_name": {"contains": ["和景家园", "智能化弱电系统工程"]},
+    "project_location": {"contains": ["长沙市雨花区"]}
+  },
+  "schedule": {
+    "plan_start_date": {"equals": "2022-04-20"},
+    "plan_completion_date": {"equals": "2023-05-15"},
+    "duration_days": {"equals": 390}
+  },
+  "main_work_items": {
+    "must_include": [
+      "综合布线系统",
+      "计算机网络系统",
+      "有线电视系统",
+      "视频监控系统",
+      "楼宇对讲系统",
+      "停车场管理系统",
+      "门禁系统",
+      "入侵报警系统",
+      "机房工程"
+    ]
+  },
+  "main_methods": {
+    "must_include": [
+      "系统配线施工要求",
+      "线缆桥架施工",
+      "设备安装",
+      "系统总调试",
+      "电缆敷设",
+      "前端设备安装",
+      "监控系统调试",
+      "停车场管理系统部件安装",
+      "门禁系统调试"
+    ]
+  },
+  "standards": {
+    "must_include_codes": ["GB50314-2015", "JGJ16-2008", "GB50348-2018"]
+  },
+  "section_presence": {
+    "quality": true,
+    "safety": true,
+    "environment": true,
+    "emergency": false
+  }
+}

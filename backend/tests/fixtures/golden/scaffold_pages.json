@@ -1,0 +1,40 @@
+{
+  "pages": [
+    {"page_number": 1, "text": "某棚户区改造A区建设项目\n悬挑脚手架工程专项施工方案\n编制单位：山东三箭建设工程股份有限公司"},
+    {"page_number": 5, "text": "1 工程概况\n项目名称：某棚户区改造A区建设项目\n工程地点：济南市市中区杆石桥街道某路口\n施工单位：山东三箭建设工程股份有限公司\n（一）建筑概况\n建筑面积：120000m²\n地下一层，地上16层，设三层裙房\n结构形式：框架剪力墙结构\n（二）结构概况"},
+    {"page_number": 20, "text": "2 施工工艺技术\n2.1 悬挑梁定位、安装\n2.2 可调节斜拉杆卸荷\n2.3 立杆设置\n2.4 纵、横向水平杆\n2.5 剪刀撑和横向斜撑设置\n2.6 脚手板、脚手片的铺设要求\n2.7 防护栏杆\n2.8 连墙件\n2.9 架体内封闭\n2.10 脚手架拆除"},
+    {"page_number": 40, "text": "3 质量保证措施"},
+    {"page_number": 41, "text": "4 施工安全保障措施"},
+    {"page_number": 42, "text": "5 环境保护与文明施工"},
+    {"page_number": 43, "text": "6 应急预案"},
+    {"page_number": 90, "text": "7 计算书"},
+    {"page_number": 91, "text": "混凝土达到C15时即可安装拉杆、搭设架体。\n构造形式可采用上拉式承力架。"},
+    {"page_number": 93, "text": "满足计算条件后安装钢梁。\n另一种结构形式为上拉下撑式承力架。"}
+  ],
+  "seed_analysis": {
+    "main_work_items": [
+      {"value": "悬挑梁定位、安装", "source_page": 20, "source_text": "2.1 悬挑梁定位、安装"},
+      {"value": "可调节斜拉杆卸荷", "source_page": 20, "source_text": "2.2 可调节斜拉杆卸荷"},
+      {"value": "立杆设置", "source_page": 20, "source_text": "2.3 立杆设置"},
+      {"value": "剪刀撑和横向斜撑设置", "source_page": 20, "source_text": "2.5 剪刀撑和横向斜撑设置"},
+      {"value": "连墙件", "source_page": 20, "source_text": "2.8 连墙件"},
+      {"value": "脚手架拆除", "source_page": 20, "source_text": "2.10 脚手架拆除"},
+      {"value": "安装拉杆", "source_page": 91, "source_text": "混凝土达到C15时即可安装拉杆、搭设架体。"},
+      {"value": "搭设架体", "source_page": 91, "source_text": "混凝土达到C15时即可安装拉杆、搭设架体。"},
+      {"value": "安装钢梁", "source_page": 93, "source_text": "满足计算条件后安装钢梁。"}
+    ],
+    "main_methods": [
+      {"name": "悬挑梁定位、安装", "source_page": 20, "source_text": "2.1 悬挑梁定位、安装"},
+      {"name": "可调节斜拉杆卸荷", "source_page": 20, "source_text": "2.2 可调节斜拉杆卸荷"},
+      {"name": "立杆设置", "source_page": 20, "source_text": "2.3 立杆设置"},
+      {"name": "纵、横向水平杆", "source_page": 20, "source_text": "2.4 纵、横向水平杆"},
+      {"name": "剪刀撑和横向斜撑设置", "source_page": 20, "source_text": "2.5 剪刀撑和横向斜撑设置"},
+      {"name": "脚手板、脚手片的铺设要求", "source_page": 20, "source_text": "2.6 脚手板、脚手片的铺设要求"},
+      {"name": "连墙件", "source_page": 20, "source_text": "2.8 连墙件"},
+      {"name": "脚手架拆除", "source_page": 20, "source_text": "2.10 脚手架拆除"},
+      {"name": "上拉式承力架", "source_page": 91, "source_text": "构造形式可采用上拉式承力架。"},
+      {"name": "上拉下撑式承力架", "source_page": 93, "source_text": "另一种结构形式为上拉下撑式承力架。"}
+    ],
+    "section_presence": {"quality": true, "safety": true, "environment": true, "emergency": true}
+  }
+}

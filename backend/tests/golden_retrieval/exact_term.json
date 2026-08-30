@@ -1,0 +1,7 @@
+{
+  "query": "连墙件设置",
+  "route": "keyword",
+  "top_k": 3,
+  "must_retrieve": ["std-a:6.1.2"],
+  "top_k_contains": ["std-a:6.1.2"]
+}

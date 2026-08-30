@@ -1,0 +1,45 @@
+{
+  "case_id": "deep_excavation",
+  "fixture": "deep_excavation_pages.json",
+  "document_type": {"equals": "深基坑支护及开挖专项施工方案", "source_page": 1},
+  "engineering_category": {"equals": "房屋建筑工程"},
+  "specialty": {"equals": "深基坑工程"},
+  "project": {
+    "project_name": {"contains": ["邻里中心", "项目"]},
+    "project_location": {"contains": ["长沙市望城区"]},
+    "construction_company": {"not_null": true}
+  },
+  "schedule": {
+    "plan_start_date": {"equals": "2025-10-10"},
+    "plan_completion_date": {"equals": "2025-12-14"},
+    "duration_days": {"equals": 65}
+  },
+  "main_work_items": {
+    "must_include": [
+      "钢板桩支护",
+      "放坡支护",
+      "旋挖灌注桩支护",
+      "基坑土方开挖",
+      "基坑回填",
+      "基坑排水及抗渗水处理"
+    ]
+  },
+  "main_methods": {
+    "must_include": [
+      "钢板桩施工方案",
+      "放坡支护施工方案",
+      "旋挖灌注桩施工方案",
+      "基坑开挖方案",
+      "基坑回填"
+    ]
+  },
+  "standards": {
+    "must_include_codes": ["JGJ120-2012", "GB50497-2019", "JGJ59-2011"]
+  },
+  "section_presence": {
+    "quality": true,
+    "safety": true,
+    "environment": true,
+    "emergency": true
+  }
+}

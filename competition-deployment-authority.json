@@ -1,0 +1,110 @@
+{
+  "schema_version": "competition-deployment-authority-v1",
+  "qualified_source": {
+    "head": "ed7f8e6662cd0c270c7e37116bcd64081d3859f7",
+    "subject": "feat(competition): add reviewed demo UI",
+    "archive_method": "git -c core.autocrlf=false archive",
+    "tracked_file_count": 196,
+    "raw_git_blob_matches": 196,
+    "raw_git_blob_mismatches": 0
+  },
+  "deployment_packaging_timestamp_utc": "2026-08-30T11:21:44Z",
+  "plan_assets": [
+    {
+      "path": "backend/data/uploads/f42886ef-83ec-454c-86e2-34d5c238ca0f.pdf",
+      "size": 15357238,
+      "sha256": "5f3ebde3bd2c0a6d6dccb516c3029fd336558e198ebeccad07d29ca0d03fd8dc"
+    },
+    {
+      "path": "backend/data/uploads/4441b5a1-a167-4e26-9711-d90a8e85f71d.pdf",
+      "size": 4354179,
+      "sha256": "b0f8c55d2f02b9c826dd1c8001a56582b470bd80ec5d5ad8368235dcb0058462"
+    }
+  ],
+  "corpus_authority": {
+    "path": "competition/corpus/gb55023-qualified-parse-result.json",
+    "sha256": "9f8d0e9fa1bd257e5b0fb7a27465242a1b02c0a46cc366d3dd2016908cad596c",
+    "canonical_parse_result_sha256": "52dce521d4b46db820ccfac9cdcc61bd83b78f3b808144eb5e29a1550114a717"
+  },
+  "installed_standard": {
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "standard_code": "GB 55023-2022",
+    "official_source_sha256": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+    "article_count": 64,
+    "canonical_package_match": true,
+    "source_pdf_required": false,
+    "runtime_files": [
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/metadata.json",
+        "sha256": "3df0302ee5d10d0e3139c66644cae3ad792925c62a7b96025c43a93a86018728"
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/pages.json",
+        "sha256": "be6943f69dc63091ded790d516064aad66f5e92600b36b7d07a9dff026e9761a"
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/chapters.json",
+        "sha256": "bbf0a9322067cd8d62c49061ca5b35b08d8f88a77b5419508104797136c0c6a1"
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/articles.json",
+        "sha256": "473f1e8806cf30a5fa5de7e6c562a15b780ae29291c79db6b8abcf4c4b71e8d6"
+      }
+    ]
+  },
+  "competition_ui": [
+    {
+      "path": "backend/app/static/competition/index.html",
+      "sha256": "a5fc281c4d6944c83d4d8a9c4542fffcef798d2edc64404103bd96f2728bbcd4"
+    },
+    {
+      "path": "backend/app/static/competition/app.js",
+      "sha256": "0615c4eeb8e0fc38c86c5037814ef8f259e11eeb7428353ba905bcd5bdbe7428"
+    },
+    {
+      "path": "backend/app/static/competition/styles.css",
+      "sha256": "e7a3353da756513c9143ddec6716b937c8f7b874e31d11b68bd19461d67f13e9"
+    }
+  ],
+  "deployment_only_material": {
+    "classification": "DEPLOYMENT-ONLY MATERIAL",
+    "semantic_authority": false,
+    "wrapper": {
+      "path": "backend/competition_public_entry.py",
+      "sha256": "9c9bfc54f0ed4bba054f50062e98508003c85bfdeb2d58b72b77bdbd583a2385"
+    },
+    "dockerfile": {
+      "path": "Dockerfile",
+      "sha256": "65f6fb6e1299bb3b41433ea95a85d8f6f2c5caace192930d9fde02eadd50db1d"
+    },
+    "dockerignore": {
+      "path": ".dockerignore",
+      "sha256": "494cc8625044fff5a7d6ee8453f45fd9b23a6020e9d59512785bb5320ecf76da"
+    }
+  },
+  "acceptance": {
+    "root_redirect": "/competition/",
+    "health_http_status": 200,
+    "competition_http_status": 200,
+    "metadata_http_status": 200,
+    "metadata_status": "READY",
+    "plan_count": 2,
+    "case_count": 3,
+    "case_a": {
+      "decision": "COMPLIANT",
+      "finding_id": "finding_993e8847b86de084c9d1942a9771bf3dab07200260499f7d38d00292060e818b"
+    },
+    "case_b": {
+      "decision": "NON_COMPLIANT",
+      "finding_id": "finding_530869523a03ddacf658e167fcff74f5b32b68f324533711a0b38538298f0c73"
+    },
+    "case_c": {
+      "decision": "INSUFFICIENT_INFORMATION",
+      "finding_id": "finding_9c02ed3517c6826c4d1228f31140a0761183ade0e33000d70c9f6127f0faa408"
+    },
+    "qualified_provenance_match": true,
+    "blocked_route_tests_passed": true,
+    "ocr_calls": 0,
+    "external_llm_calls": 0
+  }
+}

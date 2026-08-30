@@ -1,0 +1,37 @@
+{
+  "document_type": {"value": "给排水管道施工方案", "source_page": 1},
+  "project": {"project_name": {"value": "匿名测试项目", "source_page": 4}},
+  "schedule": {
+    "plan_start_date": {"value": "2022-04-15", "source_page": 4},
+    "plan_completion_date": {"value": "2023-05-10", "source_page": 4},
+    "duration_days": {"value": 390, "source_page": 4}
+  },
+  "chapters": [
+    {"title": "工程概况", "start_page": 4},
+    {"title": "编制依据及主要施工方案", "start_page": 6},
+    {"title": "施工进度计划", "start_page": 7},
+    {"title": "施工准备", "start_page": 8},
+    {"title": "主要材料进场计划", "start_page": 9},
+    {"title": "施工方法", "start_page": 10},
+    {"title": "质量标准及保护措施", "start_page": 20},
+    {"title": "文明施工与环境保护措施", "start_page": 22},
+    {"title": "施工部署及劳动力配置", "start_page": 23}
+  ],
+  "compilation_basis": [
+    {"value": "施工合同", "source_page": 6}
+  ],
+  "main_materials": [
+    {"name": "给水管", "source_page": 9}
+  ],
+  "main_methods": [
+    {"name": "管道安装", "source_page": 10},
+    {"name": "管道试验", "source_page": 11},
+    {"name": "管道冲洗", "source_page": 12}
+  ],
+  "section_presence": {
+    "quality": true,
+    "safety": true,
+    "environment": true,
+    "emergency": false
+  }
+}

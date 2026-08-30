@@ -1,0 +1,9 @@
+{
+  "articles": [
+    {"standard_id": "std-a", "standard_code": "JGJ 999-2024", "standard_name": "架体工程测试规范", "article_number": "6.1.1", "content": "支撑结构应设置可靠连接。", "sequence": 1},
+    {"standard_id": "std-a", "standard_code": "JGJ 999-2024", "standard_name": "架体工程测试规范", "article_number": "6.1.2", "content": "连墙件应按规定设置。", "sequence": 2},
+    {"standard_id": "std-a", "standard_code": "JGJ 999-2024", "standard_name": "架体工程测试规范", "article_number": "6.1.3", "content": "支撑体系应保持整体稳定。", "sequence": 3},
+    {"standard_id": "std-b", "standard_code": "GB 888-2023", "standard_name": "管道工程测试规范", "article_number": "6.1.2", "content": "给水管道安装完成后应进行冲洗。", "sequence": 1},
+    {"standard_id": "std-b", "standard_code": "GB 888-2023", "standard_name": "管道工程测试规范", "article_number": "6.1.3", "content": "施工现场材料应分类堆放。", "sequence": 2}
+  ]
+}

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="BuildCheck-Agent 资格化样例局部审查演示">
+    <title>筑审智核 · BuildCheck-Agent</title>
+    <link rel="stylesheet" href="/competition/styles.css">
+    <script src="/competition/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">筑</div>
+        <div>
+          <p class="eyebrow">BUILD CHECK · EVIDENCE FIRST</p>
+          <h1>筑审智核 <span>BuildCheck-Agent</span></h1>
+        </div>
+      </div>
+      <div class="mode-chip" aria-label="当前演示模式">
+        <span class="mode-dot" aria-hidden="true"></span>
+        已验证样例模式 · QUALIFIED SAMPLE MODE
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="section-kicker">真实方案 · 规范原文 · 确定性比较</p>
+          <h2 id="hero-title">让每一项局部判断，都能回到原始证据。</h2>
+          <p id="sample-mode-notice" class="hero-copy">
+            当前演示使用已验证的真实施工方案与已资格化规范证据，系统实时重建局部审查结果。
+          </p>
+        </div>
+        <aside class="architecture-flow" aria-label="运行权威链路">
+          <span>方案片段</span><b aria-hidden="true">→</b><span>规范证据</span>
+          <b aria-hidden="true">→</b><span>确定性比较</span><b aria-hidden="true">→</b><span>局部 Finding</span>
+        </aside>
+      </section>
+
+      <section class="safety-band" aria-labelledby="safety-title">
+        <div class="safety-icon" aria-hidden="true">i</div>
+        <div>
+          <h2 id="safety-title">局部范围声明</h2>
+          <p id="scope-notice">本结果仅针对当前方案片段与单项规范要求的局部比较，不代表整份方案总体合规状态。</p>
+        </div>
+      </section>
+
+      <section class="status-panel" aria-labelledby="environment-title">
+        <div class="section-heading compact">
+          <div>
+            <p class="section-kicker">PREFLIGHT</p>
+            <h2 id="environment-title">演示环境</h2>
+          </div>
+          <button id="refresh-status" class="secondary-button" type="button">重新检查环境</button>
+        </div>
+        <div id="environment-summary" class="environment-summary" role="status" aria-live="polite">
+          <span class="status-indicator is-loading" aria-hidden="true"></span>
+          <strong>正在验证运行时权威…</strong>
+        </div>
+        <div id="readiness-checks" class="check-grid" aria-label="环境检查项"></div>
+        <p id="remediation" class="remediation" hidden>
+          请先运行已资格化比赛环境准备命令并重新检查环境。
+        </p>
+      </section>
+
+      <section aria-labelledby="plans-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">VERIFIED PLANS</p>
+            <h2 id="plans-title">已验证真实施工方案</h2>
+          </div>
+          <p>方案仅作为固定资格化样例使用，不提供任意文件上传。</p>
+        </div>
+        <div id="plan-grid" class="plan-grid" aria-live="polite"></div>
+      </section>
+
+      <section aria-labelledby="cases-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">LOCAL REVIEW TARGETS</p>
+            <h2 id="cases-title">局部审查目标</h2>
+          </div>
+          <p>运行前仅展示中性目标信息；结果来自实时 C.3 重建。</p>
+        </div>
+        <div id="case-grid" class="case-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="result-section" class="result-section" aria-labelledby="result-title" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">SOURCE-GROUNDED FINDING</p>
+            <h2 id="result-title">局部审查结果</h2>
+          </div>
+          <p id="result-message" role="status" aria-live="polite"></p>
+        </div>
+        <div id="result-content"></div>
+      </section>
+
+    </main>
+
+    <footer>
+      <span>BuildCheck-Agent · 证据可追溯的工程审查辅助</span>
+      <span>离线同源演示 · 无 OCR · 无外部 LLM</span>
+    </footer>
+  </body>
+</html>

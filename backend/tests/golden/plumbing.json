@@ -1,0 +1,58 @@
+{
+  "case_id": "plumbing",
+  "fixture": "plumbing_pages.json",
+  "document_type": {"equals": "给排、水管道施工方案", "source_page": 1},
+  "engineering_category": {"equals": "安装工程"},
+  "specialty": {"equals": "给排水工程"},
+  "project": {
+    "project_name": {"contains": ["和景家园", "工程总承包"]},
+    "project_location": {"contains": ["长沙市雨花区"]},
+    "construction_unit": {"contains": ["城市建设投资集团有限公司"]},
+    "design_unit": {"contains": ["中国建筑东北设计研究有限公司"]},
+    "supervision_unit": {"contains": ["湖南和天工程项目管理有限公司"]},
+    "general_contractor": {"contains": ["中海建筑有限公司"]}
+  },
+  "schedule": {
+    "plan_start_date": {"equals": "2022-04-15"},
+    "plan_completion_date": {"equals": "2023-05-10"},
+    "duration_days": {"equals": 390}
+  },
+  "main_work_items": {
+    "must_include": ["给水部分", "卫生洁具安装", "排水系统"]
+  },
+  "main_methods": {
+    "must_include": [
+      "套管的设置",
+      "套管制作",
+      "PP-R 管道施工工艺",
+      "排水管安装施工工艺流程",
+      "支架安装",
+      "塑料排水管安装",
+      "柔性铸铁排水管安装",
+      "管道试压",
+      "管道冲洗、消毒"
+    ],
+    "must_not_include": [
+      "施工图纸及合同",
+      "安装工程材料选型及连接方式",
+      "安装工程系统简介"
+    ]
+  },
+  "standards": {
+    "must_include_codes": [
+      "GB50242-2019",
+      "ZJQ08-SGJB242-2017",
+      "GB50141-2008",
+      "JGJ59-2011",
+      "GB50015-2019",
+      "GB50788-2012",
+      "GB50032-2003"
+    ]
+  },
+  "section_presence": {
+    "quality": true,
+    "safety": true,
+    "environment": true,
+    "emergency": false
+  }
+}

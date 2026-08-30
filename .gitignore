@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_*/
+.venv/
+venv/
+
+# Environment and editor files
+.env
+.idea/
+.vscode/
+
+# Uploaded documents (keep the directory itself)
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
+
+# Generated document analyses (keep the directory itself)
+backend/data/analysis/*
+!backend/data/analysis/.gitkeep
+
+# Generated completeness reviews (keep the directory itself)
+backend/data/reviews/completeness/*
+!backend/data/reviews/completeness/.gitkeep
+
+# Uploaded and parsed standards (keep the directory itself)
+backend/data/standards/*
+!backend/data/standards/.gitkeep

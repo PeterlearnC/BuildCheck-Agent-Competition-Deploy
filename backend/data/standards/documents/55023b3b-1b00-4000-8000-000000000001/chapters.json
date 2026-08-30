@@ -1,0 +1,938 @@
+[
+  {
+    "chapter_id": "chapter_5dcf7eb833f2b90c2206f597a0dd29598868852c739228e47ad66a717221ff0b",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "1",
+    "chapter_title": "总",
+    "level": 1,
+    "source_page_start": 4,
+    "source_page_end": 5,
+    "source_text": "1 总",
+    "parent_chapter_id": null,
+    "structural_evidence": {
+      "evidence_id": "structure_63ee1897cf20e4cc54974ab0aeab5ecf23c9115a694d23c7e68c9008e2138a5b",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "CHAPTER",
+      "structure_number": "1",
+      "structure_title": "总",
+      "structure_level": 1,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "1 总",
+      "normalized_text": "1 总",
+      "source_references": [
+        {
+          "page_number": 4,
+          "source_order_index": 2,
+          "raw_line_id": "ocrline_12b431dbe50fc064f640f0f9179a47fe62ab972d7adc8de9969be139477e3f49",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              657.0,
+              337.0
+            ],
+            [
+              825.0,
+              337.0
+            ],
+            [
+              825.0,
+              405.0
+            ],
+            [
+              657.0,
+              405.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": null,
+        "previous_article_number": null,
+        "next_article_heading_id": "ocrline_6b9f6a9dff5d871a49e76ca18bb66b6be9fbf48366602c48757bf05aa0e5f2c6",
+        "next_article_number": "1.0.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_cbb364fc40b4d6129ca9d50ca31a8f15a056b4f4d473d6319adfafe78b5eda3f",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "2",
+    "chapter_title": "基本规定",
+    "level": 1,
+    "source_page_start": 5,
+    "source_page_end": 7,
+    "source_text": "2基本规定",
+    "parent_chapter_id": null,
+    "structural_evidence": {
+      "evidence_id": "structure_9b9c985538f779f29c5d91cb27524a1a6906834c010d1d3b3f7ba2ad530aa446",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "CHAPTER",
+      "structure_number": "2",
+      "structure_title": "基本规定",
+      "structure_level": 1,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "2基本规定",
+      "normalized_text": "2基本规定",
+      "source_references": [
+        {
+          "page_number": 5,
+          "source_order_index": 1,
+          "raw_line_id": "ocrline_f209ec1c4ebc73f8956cd67916bcb224348207ad4009f619c7586795c5520c6a",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              616.0,
+              342.0
+            ],
+            [
+              1030.0,
+              342.0
+            ],
+            [
+              1030.0,
+              399.0
+            ],
+            [
+              616.0,
+              399.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_b5fc77b7f48c75b1eed695111085c50a40ee58291bd60746aab3a8ed48b35718",
+        "previous_article_number": "1.0.4",
+        "next_article_heading_id": "ocrline_b8c68a2c2bac58b8531267f39359dfc6544fde6d0ff4b6a288c3b6785dceb2ca",
+        "next_article_number": "2.0.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_e9118a52a1eafda45252af8d0c26d069716235d218e8101faca546364909805a",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "4",
+    "chapter_title": "设",
+    "level": 1,
+    "source_page_start": 7,
+    "source_page_end": 13,
+    "source_text": "4 设",
+    "parent_chapter_id": null,
+    "structural_evidence": {
+      "evidence_id": "structure_b78b06e3316a7bd8fd8f76b59a31de9dae4e15e8fc63f92e74db3dbe74013c17",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "CHAPTER",
+      "structure_number": "4",
+      "structure_title": "设",
+      "structure_level": 1,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "4 设",
+      "normalized_text": "4 设",
+      "source_references": [
+        {
+          "page_number": 7,
+          "source_order_index": 2,
+          "raw_line_id": "ocrline_229b5cb734025ce9983af377209c601c6e10b4d18ce3edc509e2a094153c2d30",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              656.0,
+              336.0
+            ],
+            [
+              830.0,
+              336.0
+            ],
+            [
+              830.0,
+              403.0
+            ],
+            [
+              656.0,
+              403.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_1a30274c8bab3c28f10d35eb2ca5b8aa93aafcb60ff0b35859a7d05872a0f734",
+        "previous_article_number": "3.0.5",
+        "next_article_heading_id": "ocrline_ec2a59fc118c4adddc4c69d4ae03c685b41220d763490da35bb1c994e8482f68",
+        "next_article_number": "4.1.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_430a9fe16850119400e65575f260bb6f084fb378fc6d777f7917a1519afbf26d",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "4.1",
+    "chapter_title": "一般规定",
+    "level": 2,
+    "source_page_start": 7,
+    "source_page_end": 7,
+    "source_text": "4.1一般规定",
+    "parent_chapter_id": "chapter_e9118a52a1eafda45252af8d0c26d069716235d218e8101faca546364909805a",
+    "structural_evidence": {
+      "evidence_id": "structure_064dc42055a7c1539dd2a2a67299103d2c57f230d7f55c7ad592b03f5a55c23b",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "SECTION",
+      "structure_number": "4.1",
+      "structure_title": "一般规定",
+      "structure_level": 2,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "4.1一般规定",
+      "normalized_text": "4.1一般规定",
+      "source_references": [
+        {
+          "page_number": 7,
+          "source_order_index": 3,
+          "raw_line_id": "ocrline_a404c699dd01c89e7ca47a670e627efc5e4ed16680d1c09d2e7413bbb8e20113",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              647.0,
+              479.0
+            ],
+            [
+              1002.0,
+              479.0
+            ],
+            [
+              1002.0,
+              524.0
+            ],
+            [
+              647.0,
+              524.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_1a30274c8bab3c28f10d35eb2ca5b8aa93aafcb60ff0b35859a7d05872a0f734",
+        "previous_article_number": "3.0.5",
+        "next_article_heading_id": "ocrline_ec2a59fc118c4adddc4c69d4ae03c685b41220d763490da35bb1c994e8482f68",
+        "next_article_number": "4.1.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_ea6535acc1a32c7a55d641e9783a1b6a2a32697a55b435daafb3a7fac6c2321d",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "4.2",
+    "chapter_title": "荷",
+    "level": 2,
+    "source_page_start": 7,
+    "source_page_end": 9,
+    "source_text": "4.2 荷",
+    "parent_chapter_id": "chapter_e9118a52a1eafda45252af8d0c26d069716235d218e8101faca546364909805a",
+    "structural_evidence": {
+      "evidence_id": "structure_bee231133ec3c76469a66c71dd191501a6fa87f103c3a4c3dcfe2e428912b197",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "SECTION",
+      "structure_number": "4.2",
+      "structure_title": "荷",
+      "structure_level": 2,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "4.2 荷",
+      "normalized_text": "4.2 荷",
+      "source_references": [
+        {
+          "page_number": 7,
+          "source_order_index": 17,
+          "raw_line_id": "ocrline_7389c612818b66abd4453033c640b62245bbcdfe69fc0ced3807f359abc9080d",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              676.0,
+              1324.0
+            ],
+            [
+              844.0,
+              1324.0
+            ],
+            [
+              844.0,
+              1378.0
+            ],
+            [
+              676.0,
+              1378.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION",
+          "SECTION_ARTICLE_START_GAP"
+        ],
+        "previous_article_heading_id": "ocrline_e5d98b30f76dc4b33cb246d90784d84ba0c895fec9569e4da4866bdaaba7115d",
+        "previous_article_number": "4.1.4",
+        "next_article_heading_id": "ocrline_5c149441af42a185a6497c72523d7b2209920bdc903747078f83125e32a78cee",
+        "next_article_number": "4.2.3",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_93a4329bcc3c671b1f62c9aa45b18a7b7618d2457910a827f9869044f97275e0",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "4.3",
+    "chapter_title": "结构设计",
+    "level": 2,
+    "source_page_start": 9,
+    "source_page_end": 10,
+    "source_text": "4.3 结构设计",
+    "parent_chapter_id": "chapter_e9118a52a1eafda45252af8d0c26d069716235d218e8101faca546364909805a",
+    "structural_evidence": {
+      "evidence_id": "structure_8b2a17ab7737341bbc8a528a04eb9dadba454008eed50d92c35e4e0092fc2051",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "SECTION",
+      "structure_number": "4.3",
+      "structure_title": "结构设计",
+      "structure_level": 2,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "4.3 结构设计",
+      "normalized_text": "4.3 结构设计",
+      "source_references": [
+        {
+          "page_number": 9,
+          "source_order_index": 3,
+          "raw_line_id": "ocrline_92c01fd835c33de51e19442e55919ed9693fff6fa20b14a73c8ec706be7a8134",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              646.0,
+              412.0
+            ],
+            [
+              1002.0,
+              414.0
+            ],
+            [
+              1002.0,
+              463.0
+            ],
+            [
+              646.0,
+              460.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_2efa6677991cb14f908b912ba04afe3b1e553dfd8c459605d07af1b21ac87c8a",
+        "previous_article_number": "4.2.7",
+        "next_article_heading_id": "ocrline_312676d5583af0f7680cf9cd3c49f26e77951d83f3839af33c5263a94329004e",
+        "next_article_number": "4.3.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_a305648e44d0b827362db20813094e53762645fec7cc3ba5d69bd500831817b4",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "4.4",
+    "chapter_title": "构造要求",
+    "level": 2,
+    "source_page_start": 10,
+    "source_page_end": 13,
+    "source_text": "4.4 构造要求",
+    "parent_chapter_id": "chapter_e9118a52a1eafda45252af8d0c26d069716235d218e8101faca546364909805a",
+    "structural_evidence": {
+      "evidence_id": "structure_f5f0bf99f61668fa51575679caf5f74072cb44306b853b6cba4a82952f74ffd7",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "SECTION",
+      "structure_number": "4.4",
+      "structure_title": "构造要求",
+      "structure_level": 2,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "4.4 构造要求",
+      "normalized_text": "4.4 构造要求",
+      "source_references": [
+        {
+          "page_number": 10,
+          "source_order_index": 1,
+          "raw_line_id": "ocrline_04cd51ee9bb39e56f4a40b32deee787e81ce0211f957c5e7b40c4c6b601d85e8",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              647.0,
+              280.0
+            ],
+            [
+              1003.0,
+              280.0
+            ],
+            [
+              1003.0,
+              328.0
+            ],
+            [
+              647.0,
+              328.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_3996d5aa5a339107a4c210cc7f872e1142ac3398c2b652c03925e0fb298cdcf0",
+        "previous_article_number": "4.3.6",
+        "next_article_heading_id": "ocrline_c3ba47973b43f23e36dc6e906ef3a63c9be50d81db3ce500ad7d257e7fe5f932",
+        "next_article_number": "4.4.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_4544a9d72f00487462f40d2e847ada5d1da3c0e9b13503cc6224d5782cd40045",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "5",
+    "chapter_title": "搭设、使用与拆除",
+    "level": 1,
+    "source_page_start": 13,
+    "source_page_end": 17,
+    "source_text": "5 搭设、使用与拆除",
+    "parent_chapter_id": null,
+    "structural_evidence": {
+      "evidence_id": "structure_ff046d28931e6775b2c2f85931eb9a4e71bab28b93f890a8bd8d3eaec3fdbed2",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "CHAPTER",
+      "structure_number": "5",
+      "structure_title": "搭设、使用与拆除",
+      "structure_level": 1,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "5 搭设、使用与拆除",
+      "normalized_text": "5 搭设、使用与拆除",
+      "source_references": [
+        {
+          "page_number": 13,
+          "source_order_index": 1,
+          "raw_line_id": "ocrline_6711c42e653274613dc55098db7f11a8dd113136abf68910e110b52ba9537b9f",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              539.0,
+              337.0
+            ],
+            [
+              1105.0,
+              337.0
+            ],
+            [
+              1105.0,
+              401.0
+            ],
+            [
+              539.0,
+              401.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_27d670e5b6ceeef09bf38df92f95abaeac995452a4754d16a28239d29e396e59",
+        "previous_article_number": "4.4.16",
+        "next_article_heading_id": "ocrline_03693903361cf68b0d239d2d8c72949b66795ca9fce2efca3ba6429f56574b19",
+        "next_article_number": "5.1.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_3af46f81cdbe0c37bd124505e544a8ce9eb620427d9a45d2b0ce61b0173f60ff",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "5.1",
+    "chapter_title": "个人防护",
+    "level": 2,
+    "source_page_start": 13,
+    "source_page_end": 13,
+    "source_text": "5.1个人防护",
+    "parent_chapter_id": "chapter_4544a9d72f00487462f40d2e847ada5d1da3c0e9b13503cc6224d5782cd40045",
+    "structural_evidence": {
+      "evidence_id": "structure_c12dd667551569d9c43316822d7551d2553488d8a0ac7a13ebc57df4efc1e6cd",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "SECTION",
+      "structure_number": "5.1",
+      "structure_title": "个人防护",
+      "structure_level": 2,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "5.1个人防护",
+      "normalized_text": "5.1个人防护",
+      "source_references": [
+        {
+          "page_number": 13,
+          "source_order_index": 2,
+          "raw_line_id": "ocrline_719d3d595e0cc02d8c0b9cc120b909882f26f4b30806367c3003797c8fe7e4a7",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              646.0,
+              477.0
+            ],
+            [
+              1001.0,
+              477.0
+            ],
+            [
+              1001.0,
+              525.0
+            ],
+            [
+              646.0,
+              525.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_27d670e5b6ceeef09bf38df92f95abaeac995452a4754d16a28239d29e396e59",
+        "previous_article_number": "4.4.16",
+        "next_article_heading_id": "ocrline_03693903361cf68b0d239d2d8c72949b66795ca9fce2efca3ba6429f56574b19",
+        "next_article_number": "5.1.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_909c630454e325726cef9245e3e08240bc0953f4724f34e2b37a7e81d48b6d94",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "5.2",
+    "chapter_title": "搭",
+    "level": 2,
+    "source_page_start": 13,
+    "source_page_end": 14,
+    "source_text": "5.2 搭",
+    "parent_chapter_id": "chapter_4544a9d72f00487462f40d2e847ada5d1da3c0e9b13503cc6224d5782cd40045",
+    "structural_evidence": {
+      "evidence_id": "structure_5562a838e17d42a4e4ed6f5b44fdc3f1f4a454f83d2c988f54d2f52d73742472",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "SECTION",
+      "structure_number": "5.2",
+      "structure_title": "搭",
+      "structure_level": 2,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "5.2 搭",
+      "normalized_text": "5.2 搭",
+      "source_references": [
+        {
+          "page_number": 13,
+          "source_order_index": 12,
+          "raw_line_id": "ocrline_6dab889f863239b48478e6a432d11ec1bec767c95836977d8f50ec8d823a38ca",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              675.0,
+              1257.0
+            ],
+            [
+              866.0,
+              1257.0
+            ],
+            [
+              866.0,
+              1312.0
+            ],
+            [
+              675.0,
+              1312.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_2625f592729f0355aecb9a4fee28f6c5d168efd18c4fe993c9678bb20b596d8d",
+        "previous_article_number": "5.1.3",
+        "next_article_heading_id": "ocrline_030aaf3db4611da413e8bcef3e0b384818128d92995b0be68b211a1805df4532",
+        "next_article_number": "5.2.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_b6a3b69f47f99ccc0626869bb8aab5c0e0da8cfaafbe594295d192143a898d3f",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "5.3",
+    "chapter_title": "使用",
+    "level": 2,
+    "source_page_start": 14,
+    "source_page_end": 15,
+    "source_text": "5.3 使用",
+    "parent_chapter_id": "chapter_4544a9d72f00487462f40d2e847ada5d1da3c0e9b13503cc6224d5782cd40045",
+    "structural_evidence": {
+      "evidence_id": "structure_be2161b4345df7a686307ef188145e396b32ed24133fe1f2e484b156c59be645",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "SECTION",
+      "structure_number": "5.3",
+      "structure_title": "使用",
+      "structure_level": 2,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "5.3 使用",
+      "normalized_text": "5.3 使用",
+      "source_references": [
+        {
+          "page_number": 14,
+          "source_order_index": 5,
+          "raw_line_id": "ocrline_e3cc1613051bcc3edf0f51314a3ad3fcf72118a8f3c9142069c158c64dcec3bf",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              672.0,
+              535.0
+            ],
+            [
+              979.0,
+              535.0
+            ],
+            [
+              979.0,
+              600.0
+            ],
+            [
+              672.0,
+              600.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_6c08845780216f79a2b8b47422becd487cdfbfc42bb33eb3b6a97d6c81e9ea89",
+        "previous_article_number": "5.2.4",
+        "next_article_heading_id": "ocrline_f0bde49841580b5a5c7fc7a666a64fb1fe5b1036055b4b65e588913ac4159e71",
+        "next_article_number": "5.3.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_e96e0097267d25a489909a662d3c8630743cb4776fffc0ced8d0c1f2430a6890",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "5.4",
+    "chapter_title": "拆除",
+    "level": 2,
+    "source_page_start": 15,
+    "source_page_end": 17,
+    "source_text": "5.4 拆除",
+    "parent_chapter_id": "chapter_4544a9d72f00487462f40d2e847ada5d1da3c0e9b13503cc6224d5782cd40045",
+    "structural_evidence": {
+      "evidence_id": "structure_269e9233a533d35b31c15537dad3679199b19b0de124980a527d34c42146c76d",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "SECTION",
+      "structure_number": "5.4",
+      "structure_title": "拆除",
+      "structure_level": 2,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "5.4 拆除",
+      "normalized_text": "5.4 拆除",
+      "source_references": [
+        {
+          "page_number": 15,
+          "source_order_index": 23,
+          "raw_line_id": "ocrline_196abf2dadad37b083eacb5e5547c501748d5320d03cd15fd079cdced229fc8a",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              671.0,
+              1712.0
+            ],
+            [
+              981.0,
+              1712.0
+            ],
+            [
+              981.0,
+              1781.0
+            ],
+            [
+              671.0,
+              1781.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_7d1020a5be163aa114db37076865ada4b8019194ba5c05fcbe62de4df728b655",
+        "previous_article_number": "5.3.11",
+        "next_article_heading_id": "ocrline_28cd795b41bafc843d2f5fa238cf03669a5edff84e295ca7a9255a40ee8cc409",
+        "next_article_number": "5.4.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  },
+  {
+    "chapter_id": "chapter_4395f7afb3b9833d3979191f4ea757fd030364a64528ae5b659cb4c057ca378c",
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
+    "chapter_number": "6",
+    "chapter_title": "检查与验收",
+    "level": 1,
+    "source_page_start": 17,
+    "source_page_end": 17,
+    "source_text": "6 检查与验收",
+    "parent_chapter_id": null,
+    "structural_evidence": {
+      "evidence_id": "structure_c652242ecf4ed7c64d5147e57b033a2dca4b57ce53c4f41d522e99a2be9c35e3",
+      "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+      "source_kind": "OCR_TEXT",
+      "producer": "OCR_TRANSITION",
+      "structure_kind": "CHAPTER",
+      "structure_number": "6",
+      "structure_title": "检查与验收",
+      "structure_level": 1,
+      "region_role": "NORMATIVE_BODY",
+      "evidence_role": "STRUCTURAL_ONLY",
+      "accepted_as_normative": false,
+      "source_text": "6 检查与验收",
+      "normalized_text": "6 检查与验收",
+      "source_references": [
+        {
+          "page_number": 17,
+          "source_order_index": 1,
+          "raw_line_id": "ocrline_a6eb615f99b11ab6d31d9420eace000789a696f30952b5e09bdc46386e4c7679",
+          "parser_line_index": null,
+          "polygon": [
+            [
+              628.0,
+              338.0
+            ],
+            [
+              1016.0,
+              341.0
+            ],
+            [
+              1016.0,
+              400.0
+            ],
+            [
+              628.0,
+              397.0
+            ]
+          ]
+        }
+      ],
+      "transition": {
+        "issue_codes": [
+          "STRUCTURAL_TRANSITION"
+        ],
+        "previous_article_heading_id": "ocrline_a6ce65eb9cb2198829694b9cc0940f0e3c3d8530d58b5929a338f42eab9893e1",
+        "previous_article_number": "5.4.5",
+        "next_article_heading_id": "ocrline_74744c2e843da65058eb802f367107b5567668ad085886c7c6988dafa5c9a566",
+        "next_article_number": "6.0.1",
+        "ambiguous": false
+      },
+      "validation_basis": [
+        "OCR_TRANSITION",
+        "EXPLICIT_HEADING_SYNTAX",
+        "REGION_ROLE",
+        "NUMBER_GRAMMAR",
+        "SOURCE_ORDER",
+        "ARTICLE_PREFIX",
+        "PREFIX_TRANSITION"
+      ],
+      "resolver_version": "v0.4-b.3c.3-s1-r1-structural"
+    }
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "standard_code": "JGJ 999-2024",
+  "standard_name": "工程构件安装测试规范",
+  "chapter_numbers": ["1"],
+  "article_numbers": ["1.0.1", "1.0.2"],
+  "articles": {
+    "1.0.1": {"source_page_start": 1, "source_page_end": 1},
+    "1.0.2": {"source_page_start": 1, "source_page_end": 1}
+  },
+  "must_not_articles": ["2024.10.01"]
+}

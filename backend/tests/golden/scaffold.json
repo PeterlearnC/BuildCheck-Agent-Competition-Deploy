@@ -1,0 +1,40 @@
+{
+  "case_id": "scaffold",
+  "fixture": "scaffold_pages.json",
+  "document_type": {"equals": "悬挑脚手架工程专项施工方案", "source_page": 1},
+  "engineering_category": {"equals": "房屋建筑"},
+  "project": {
+    "project_location": {"contains": ["济南市市中区杆石桥街道"]},
+    "construction_company": {"equals": "山东三箭建设工程股份有限公司"}
+  },
+  "main_work_items": {
+    "must_include": [
+      "悬挑梁定位、安装",
+      "可调节斜拉杆卸荷",
+      "立杆设置",
+      "剪刀撑和横向斜撑设置",
+      "连墙件",
+      "脚手架拆除"
+    ],
+    "must_not_include": ["安装拉杆", "搭设架体", "安装钢梁"]
+  },
+  "main_methods": {
+    "must_include": [
+      "悬挑梁定位、安装",
+      "可调节斜拉杆卸荷",
+      "立杆设置",
+      "纵、横向水平杆",
+      "剪刀撑和横向斜撑设置",
+      "脚手板、脚手片的铺设要求",
+      "连墙件",
+      "脚手架拆除"
+    ],
+    "must_not_include": ["上拉式承力架", "上拉下撑式承力架"]
+  },
+  "section_presence": {
+    "quality": true,
+    "safety": true,
+    "environment": true,
+    "emergency": true
+  }
+}
