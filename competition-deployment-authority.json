@@ -5,10 +5,19 @@
     "subject": "fix(competition): bind three-case pack F1 checkpoint",
     "archive_method": "git -c core.autocrlf=false archive",
     "tracked_file_count": 238,
-    "raw_git_blob_matches": 238,
-    "raw_git_blob_mismatches": 0
+    "raw_git_blob_matches": 237,
+    "raw_git_blob_mismatches": 0,
+    "approved_deployment_overrides": [
+      {
+        "path": "README.md",
+        "source_blob_sha256": "7143358daf77ed6b6b8ac546b01b89ed900ceb77f51ca6f7bb7b087b03c5595d",
+        "deployment_sha256": "63d8ed933a34c783b4623a80234f1b51b00c96022304cd1061939b4cb6e3ce50",
+        "approval_phase": "Competition-D8-B-R2",
+        "semantic_authority": false
+      }
+    ]
   },
-  "deployment_packaging_timestamp_utc": "2026-09-11T14:28:12Z",
+  "deployment_packaging_timestamp_utc": "2026-09-13T10:39:30Z",
   "plan_assets": [
     {
       "path": "backend/data/uploads/f42886ef-83ec-454c-86e2-34d5c238ca0f.pdf",
@@ -80,6 +89,13 @@
     "dockerignore": {
       "path": ".dockerignore",
       "sha256": "494cc8625044fff5a7d6ee8453f45fd9b23a6020e9d59512785bb5320ecf76da"
+    },
+    "readme": {
+      "path": "README.md",
+      "sha256": "63d8ed933a34c783b4623a80234f1b51b00c96022304cd1061939b4cb6e3ce50",
+      "classification": "HUMAN-APPROVED DEPLOYMENT DOCUMENTATION",
+      "semantic_authority": false,
+      "parent_machine_checkpoint": "50ab4161bc31cbf7f411e5f7757b13995188fed5"
     }
   },
   "acceptance": {
