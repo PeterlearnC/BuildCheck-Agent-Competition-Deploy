@@ -26,3 +26,4 @@ backend/data/reviews/completeness/*
 # Uploaded and parsed standards (keep the directory itself)
 backend/data/standards/*
 !backend/data/standards/.gitkeep
+!backend/data/standards/registry.json

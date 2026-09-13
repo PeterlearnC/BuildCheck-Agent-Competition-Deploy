@@ -372,8 +372,8 @@ def test_quality_and_corpus_version_change_invalidates_semantic_run_only() -> No
     assert current.ocr_run_id != legacy.ocr_run_id
     assert current.execution_id == legacy.execution_id
     assert current.pages == legacy.pages
-    assert OCR_QUALITY_GATE_VERSION == "v0.4-b.3c.2-f1-r1-quality"
-    assert OCR_CORPUS_SEMANTICS_VERSION == "v0.4-b.3c.3-s1-r1-ocr-corpus"
+    assert OCR_QUALITY_GATE_VERSION == "v0.4-b.3b-q1-r1-quality"
+    assert OCR_CORPUS_SEMANTICS_VERSION == "v0.4-b.3b-q1-r1-ocr-corpus"
 
     reassessed_legacy = OCRQualityGate().assess(legacy)
     assert reassessed_legacy.quality_gate_version == OCR_QUALITY_GATE_VERSION

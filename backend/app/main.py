@@ -10,6 +10,7 @@ from app.api.routes.competition import router as competition_router
 from app.api.routes.completeness_review import router as completeness_review_router
 from app.api.routes.documents import router as documents_router
 from app.api.routes.review import router as review_router
+from app.api.routes.review_report import router as review_report_router
 from app.api.routes.standards import router as standards_router
 from app.core.config import get_settings
 from app.schemas.document import HealthResponse
@@ -21,6 +22,7 @@ app.include_router(documents_router, prefix=settings.api_v1_prefix)
 app.include_router(analysis_router, prefix=settings.api_v1_prefix)
 app.include_router(completeness_review_router, prefix=settings.api_v1_prefix)
 app.include_router(review_router, prefix=settings.api_v1_prefix)
+app.include_router(review_report_router, prefix=settings.api_v1_prefix)
 app.include_router(standards_router, prefix=settings.api_v1_prefix)
 app.include_router(competition_router, prefix=settings.api_v1_prefix)
 

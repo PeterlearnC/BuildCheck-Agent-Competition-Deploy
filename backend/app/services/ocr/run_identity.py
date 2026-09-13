@@ -13,8 +13,8 @@ from app.schemas.ocr import (
 
 
 OCR_ADAPTER_VERSION = "v0.4-b.3b.1b-adapter"
-OCR_QUALITY_GATE_VERSION = "v0.4-b.3c.2-f1-r1-quality"
-OCR_CORPUS_SEMANTICS_VERSION = "v0.4-b.3c.3-s1-r1-ocr-corpus"
+OCR_QUALITY_GATE_VERSION = "v0.4-b.3b-q1-r1-quality"
+OCR_CORPUS_SEMANTICS_VERSION = "v0.4-b.3b-q1-r1-ocr-corpus"
 
 
 def _digest(prefix: str, payload: object) -> str:

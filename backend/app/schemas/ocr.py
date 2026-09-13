@@ -4,7 +4,7 @@ from enum import Enum
 import math
 from typing import Annotated
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 SHA256 = Annotated[str, Field(pattern=r"^[0-9a-fA-F]{64}$")]
@@ -34,6 +34,47 @@ class OCRIssueCode(str, Enum):
     LOW_TEXT_COVERAGE = "LOW_TEXT_COVERAGE"
     IDENTITY_CONFLICT = "IDENTITY_CONFLICT"
     SOURCE_MAPPING_FAILURE = "SOURCE_MAPPING_FAILURE"
+    CONFIDENCE_REJECTED = "CONFIDENCE_REJECTED"
+    CONFIDENCE_REVIEW_REQUIRED = "CONFIDENCE_REVIEW_REQUIRED"
+
+
+class OCRCapabilityState(str, Enum):
+    NOT_REQUIRED = "NOT_REQUIRED"
+    REQUIRED = "REQUIRED"
+    MIXED = "MIXED"
+    UNAVAILABLE = "UNAVAILABLE"
+    BLOCKED = "BLOCKED"
+
+
+class OCRCapabilityDecision(BaseModel):
+    """Inspector-derived authorization for one controlled OCR invocation."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    state: OCRCapabilityState
+    document_status: str
+    authorized_page_numbers: tuple[int, ...] = ()
+    native_text_page_numbers: tuple[int, ...] = ()
+    blocked_page_numbers: tuple[int, ...] = ()
+    reason: str
+
+    @model_validator(mode="after")
+    def page_sets_are_disjoint_and_positive(self):
+        sets = (
+            set(self.authorized_page_numbers),
+            set(self.native_text_page_numbers),
+            set(self.blocked_page_numbers),
+        )
+        if any(number < 1 for values in sets for number in values):
+            raise ValueError("OCR capability page numbers must be one-based.")
+        if sets[0] & sets[1] or sets[0] & sets[2] or sets[1] & sets[2]:
+            raise ValueError("OCR capability page classifications must be disjoint.")
+        if self.state in {OCRCapabilityState.REQUIRED, OCRCapabilityState.MIXED}:
+            if not self.authorized_page_numbers:
+                raise ValueError("OCR-capable decisions require authorized pages.")
+        elif self.authorized_page_numbers:
+            raise ValueError("Blocked/unavailable/not-required OCR cannot authorize pages.")
+        return self
 
 
 class OCRBindingMethod(str, Enum):
@@ -62,6 +103,20 @@ class OCRProviderIdentity(BaseModel):
     recognizer: OCRModelArtifact
     classifier: OCRModelArtifact | None = None
     classification_enabled: bool = False
+
+
+class OCRProviderAvailability(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    available: bool
+    reason: str
+
+    @field_validator("reason")
+    @classmethod
+    def reason_is_not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("OCR provider availability requires a reason.")
+        return value.strip()
 
 
 class OCRRenderConfig(BaseModel):
@@ -301,6 +356,32 @@ class OfficialSourceBinding(BaseModel):
     def binding_text_is_not_blank(cls, value: str) -> str:
         if not value.strip():
             raise ValueError("Official-source binding fields must not be blank.")
+        return value.strip()
+
+
+class TrustedOfficialSourceRecord(BaseModel):
+    """Immutable checksum-indexed authority owned by the application."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    source_checksum: SHA256
+    canonical_standard_code: str
+    display_standard_code: str
+    standard_name: str
+    authority_id: str
+    authority_provenance: str
+
+    @field_validator(
+        "canonical_standard_code",
+        "display_standard_code",
+        "standard_name",
+        "authority_id",
+        "authority_provenance",
+    )
+    @classmethod
+    def authority_text_is_not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Trusted official-source authority fields must not be blank.")
         return value.strip()
 
 

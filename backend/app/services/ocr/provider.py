@@ -14,6 +14,7 @@ from app.schemas.ocr import (
     OCRCharacterResult,
     OCRLineResult,
     OCRPageResult,
+    OCRProviderAvailability,
     OCRProviderIdentity,
 )
 from app.services.ocr.page_renderer import RenderedOCRPage
@@ -29,6 +30,10 @@ class OCRProvider(ABC):
     @property
     @abstractmethod
     def identity(self) -> OCRProviderIdentity:
+        raise NotImplementedError
+
+    @abstractmethod
+    def availability(self) -> OCRProviderAvailability:
         raise NotImplementedError
 
     @abstractmethod
@@ -67,6 +72,26 @@ class RapidOCRSubprocessProvider(OCRProvider):
     @property
     def identity(self) -> OCRProviderIdentity:
         return self.config.identity
+
+    def availability(self) -> OCRProviderAvailability:
+        if not self.config.python_executable.is_file():
+            return OCRProviderAvailability(
+                available=False,
+                reason="Pinned OCR worker Python executable is unavailable.",
+            )
+        if not self.config.worker_script.is_file():
+            return OCRProviderAvailability(
+                available=False,
+                reason="Pinned OCR worker script is unavailable.",
+            )
+        try:
+            self._verify_model_artifacts()
+        except OCRProviderError as exc:
+            return OCRProviderAvailability(available=False, reason=str(exc))
+        return OCRProviderAvailability(
+            available=True,
+            reason="Pinned OCR worker runtime and model artifacts are available.",
+        )
 
     def recognize_page(self, page: RenderedOCRPage) -> OCRPageResult:
         self._verify_model_artifacts()

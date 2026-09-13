@@ -8,19 +8,29 @@ from pathlib import Path
 from app.core.config import Settings, get_settings
 from app.schemas.competition_demo import (
     CompetitionCaseRunResult,
-    CompetitionCaseSummary,
     CompetitionDemoMetadata,
+    CompetitionFindingCaseRunResult,
+    CompetitionFindingCaseSummary,
     CompetitionPlanEvidence,
     CompetitionPlanFactEvidence,
     CompetitionPlanSummary,
     CompetitionReadinessCheck,
+    CompetitionReviewGapCaseRunResult,
+    CompetitionReviewGapCaseSummary,
+    CompetitionReviewGapPlanEvidence,
+    CompetitionReviewGapTechnicalProvenance,
     CompetitionStandardEvidence,
     CompetitionTechnicalProvenance,
 )
 from app.schemas.compliance_comparison import ComparisonDecision
+from app.schemas.findings_workspace import ReviewGapWorkspaceItem
 from app.schemas.review_finding import ReviewFinding
 from app.services.review.compliance_comparison_service import (
     ComplianceComparisonError,
+)
+from app.services.review.findings_workspace_service import (
+    FindingsWorkspaceError,
+    FindingsWorkspaceService,
 )
 from app.services.review.plan_fact_service import PlanFactError
 from app.services.review.review_finding_service import (
@@ -33,8 +43,9 @@ from app.services.review.review_unit_service import ReviewDocumentNotFoundError,
 from app.services.standards.standard_repository import StandardRepository
 from scripts.prepare_competition_demo import (
     CompetitionBootstrapError,
-    DemoCase,
+    DemoFindingCase,
     DemoManifest,
+    DemoReviewGapCase,
     QualifiedCorpusPackage,
     _assert_live_finding,
     _finding_service,
@@ -43,6 +54,7 @@ from scripts.prepare_competition_demo import (
     canonical_sha256,
     load_corpus_package,
     load_manifest,
+    select_qualified_review_gap,
     sha256_file,
 )
 
@@ -57,6 +69,17 @@ SAMPLE_MODE_NOTICE = (
 SCOPE_NOTICE = (
     "本结果仅针对当前方案片段与单项规范要求的局部比较，"
     "不代表整份方案总体合规状态。"
+)
+DEMO_SCOPE_NOTICE = (
+    "本演示仅呈现固定局部机器结果，不代表整份方案总体合规状态或完整审查覆盖。"
+)
+REVIEW_GAP_SCOPE_NOTICE = (
+    "该项是机器审查工作区中的明确审查缺口，不是合规判断，"
+    "也不代表整份方案的覆盖或批准状态。"
+)
+REVIEW_GAP_EXPLANATION = (
+    "方案中已识别出一个局部审查目标，但当前资格化机器管线无法建立足够的"
+    "规范范围权威，因此没有进入规范要求分解或合规比较。"
 )
 
 DECISION_LABELS: dict[ComparisonDecision, str] = {
@@ -77,15 +100,15 @@ DECISION_EXPLANATIONS: dict[ComparisonDecision, str] = {
 CASE_PRESENTATION: dict[str, tuple[str, str]] = {
     "CASE-A": ("可调托撑插入长度", "对比方案片段中的插入长度与规范最小限值。"),
     "CASE-B": ("立杆钢管间隙控制", "对比方案控制上限与规范允许上限。"),
-    "CASE-C": ("连墙件片段与可调支撑要求", "检验当前局部证据能否形成确定性原子比较。"),
+    "CASE-C": ("套管预埋水平标高控制", "展示当前标准范围无法建立时形成的明确审查缺口。"),
 }
 
 PLAN_PRESENTATION: dict[str, str] = {
     "f42886ef-83ec-454c-86e2-34d5c238ca0f": (
         "山东汇金国际金融中心建设项目 · 贝雷梁高支模专项施工方案"
     ),
-    "4441b5a1-a167-4e26-9711-d90a8e85f71d": (
-        "经八纬一棚户区改造 A 区建设项目 · 悬挑脚手架工程专项施工方案"
+    "04039d98-4131-422a-b29a-256bade04a6a": (
+        "和景家园 · 施工组织设计"
     ),
 }
 
@@ -229,7 +252,7 @@ class CompetitionDemoService:
                 plans=(),
                 cases=(),
                 sample_mode_notice=SAMPLE_MODE_NOTICE,
-                scope_notice=SCOPE_NOTICE,
+                scope_notice=DEMO_SCOPE_NOTICE,
             )
 
         case_counts = {
@@ -246,26 +269,39 @@ class CompetitionDemoService:
             )
             for plan in manifest.plans
         )
-        cases = tuple(
-            CompetitionCaseSummary(
-                case_id=case.case_id,
-                label=CASE_PRESENTATION[case.case_id][0],
-                description=CASE_PRESENTATION[case.case_id][1],
-                document_id=case.document_id,
-                page_number=case.request.page_number,
-                standard_code=manifest.standard.standard_code,
-                article_number=case.article_number,
-            )
-            for case in manifest.cases
-        )
+        case_summaries = []
+        for case in manifest.cases:
+            presentation = CASE_PRESENTATION[case.case_id]
+            if isinstance(case, DemoFindingCase):
+                case_summaries.append(
+                    CompetitionFindingCaseSummary(
+                        case_id=case.case_id,
+                        label=presentation[0],
+                        description=presentation[1],
+                        document_id=case.document_id,
+                        page_number=case.request.page_number,
+                        standard_code=manifest.standard.standard_code,
+                        article_number=case.article_number,
+                    )
+                )
+            else:
+                case_summaries.append(
+                    CompetitionReviewGapCaseSummary(
+                        case_id=case.case_id,
+                        label=presentation[0],
+                        description=presentation[1],
+                        document_id=case.document_id,
+                        page_number=case.plan_locator.physical_page,
+                    )
+                )
         return CompetitionDemoMetadata(
             schema_version=manifest.schema_version,
             status="READY" if snapshot.ready else "NOT_READY",
             readiness_checks=snapshot.checks,
             plans=plans,
-            cases=cases,
+            cases=tuple(case_summaries),
             sample_mode_notice=SAMPLE_MODE_NOTICE,
-            scope_notice=SCOPE_NOTICE,
+            scope_notice=DEMO_SCOPE_NOTICE,
         )
 
     def run_case(self, case_id: str) -> CompetitionCaseRunResult:
@@ -277,6 +313,9 @@ class CompetitionDemoService:
             raise CompetitionDemoCaseNotFoundError("unknown competition case")
         if not snapshot.ready:
             raise CompetitionDemoNotReadyError("competition runtime is not ready")
+
+        if isinstance(case, DemoReviewGapCase):
+            return self._run_review_gap_case(case, snapshot.manifest)
 
         try:
             response = _finding_service(self.settings).create(case.document_id, build_comparison_request(case))
@@ -298,14 +337,41 @@ class CompetitionDemoService:
             raise CompetitionDemoExecutionError("live C.3 reconstruction failed safely") from exc
         except Exception as exc:  # pragma: no cover - impossible internal invariant boundary
             raise CompetitionDemoInternalError("unexpected competition invariant failure") from exc
-        return self._project(case, snapshot.manifest, finding)
+        return self._project_finding(case, snapshot.manifest, finding)
+
+    def _run_review_gap_case(
+        self,
+        case: DemoReviewGapCase,
+        manifest: DemoManifest,
+    ) -> CompetitionReviewGapCaseRunResult:
+        plan = next(item for item in manifest.plans if item.document_id == case.document_id)
+        try:
+            workspace = FindingsWorkspaceService(settings=self.settings).build_workspace(
+                case.document_id
+            )
+            gap = select_qualified_review_gap(case, plan, workspace)
+        except CompetitionBootstrapError as exc:
+            raise CompetitionDemoAuthorityDriftError(
+                "live ReviewGap no longer matches qualified plan authority"
+            ) from exc
+        except ReviewDocumentNotFoundError as exc:
+            raise CompetitionDemoNotReadyError("verified plan authority changed") from exc
+        except FindingsWorkspaceError as exc:
+            raise CompetitionDemoExecutionError(
+                "live D.6 reconstruction failed safely"
+            ) from exc
+        except Exception as exc:  # pragma: no cover - internal invariant boundary
+            raise CompetitionDemoInternalError(
+                "unexpected D.6 competition invariant failure"
+            ) from exc
+        return self._project_review_gap(case, manifest, workspace.workspace_id, gap)
 
     @staticmethod
-    def _project(
-        case: DemoCase,
+    def _project_finding(
+        case: DemoFindingCase,
         manifest: DemoManifest,
         finding: ReviewFinding,
-    ) -> CompetitionCaseRunResult:
+    ) -> CompetitionFindingCaseRunResult:
         plan = next(item for item in manifest.plans if item.document_id == case.document_id)
         plan_citation = finding.plan_citation
         standard_citation = finding.standard_citation
@@ -321,7 +387,7 @@ class CompetitionDemoService:
             )
             for fact in plan_citation.plan_facts
         )
-        return CompetitionCaseRunResult(
+        return CompetitionFindingCaseRunResult(
             message="局部审查结果已生成",
             case_id=case.case_id,
             finding_id=finding.finding_id,
@@ -369,6 +435,53 @@ class CompetitionDemoService:
                 review_unit_id=plan_citation.review_unit_id,
                 plan_fact_ids=tuple(fact.plan_fact_id for fact in plan_citation.plan_facts),
                 decision_scope=finding.decision_scope,
+            ),
+        )
+
+    @staticmethod
+    def _project_review_gap(
+        case: DemoReviewGapCase,
+        manifest: DemoManifest,
+        workspace_id: str,
+        gap: ReviewGapWorkspaceItem,
+    ) -> CompetitionReviewGapCaseRunResult:
+        plan = next(item for item in manifest.plans if item.document_id == case.document_id)
+        source = gap.plan_source
+        return CompetitionReviewGapCaseRunResult(
+            message="明确审查缺口已由机器工作区生成",
+            case_id=case.case_id,
+            review_gap_id=gap.review_gap_id,
+            terminal_class=gap.gap_source,
+            terminal_status=gap.candidate_terminal_state,
+            local_explanation=REVIEW_GAP_EXPLANATION,
+            scope_notice=REVIEW_GAP_SCOPE_NOTICE,
+            finding_absent=getattr(gap, "finding_id", None) is None,
+            comparison_absent=getattr(gap, "comparison_id", None) is None,
+            decision_absent=getattr(gap, "decision", None) is None,
+            standard_authority_absent=gap.standard_source is None,
+            article_authority_absent=gap.standard_source is None,
+            requirement_authority_absent=gap.requirement_id is None,
+            plan_evidence=CompetitionReviewGapPlanEvidence(
+                document_display_name=PLAN_PRESENTATION[plan.document_id],
+                document_id=source.document_id,
+                pdf_sha256=source.document_sha256,
+                physical_page=source.physical_page,
+                page_char_start=source.page_char_start,
+                page_char_end=source.page_char_end,
+                exact_text=source.source_text,
+                text_sha256=source.source_text_sha256,
+                candidate_id=source.candidate_id,
+            ),
+            technical_provenance=CompetitionReviewGapTechnicalProvenance(
+                workspace_id=workspace_id,
+                whole_plan_review_id=gap.whole_plan_review_id,
+                review_gap_id=gap.review_gap_id,
+                document_id=gap.document_id,
+                document_sha256=gap.document_sha256,
+                candidate_trace_id=gap.candidate_trace_id,
+                candidate_id=gap.candidate_id,
+                identity_version=gap.identity_version,
+                projection_version=gap.projection_version,
             ),
         )
 

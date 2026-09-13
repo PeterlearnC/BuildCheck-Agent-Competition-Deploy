@@ -1,16 +1,16 @@
 {
-  "schema_version": "competition-demo-manifest-v1",
+  "schema_version": "competition-demo-manifest-v2",
   "qualified_core_baseline": "7a0250a52f84fdd332775dacb2d5683877625f1a",
   "standard": {
     "standard_id": "55023b3b-1b00-4000-8000-000000000001",
     "standard_code": "GB 55023-2022",
     "canonical_standard_code": "GB55023-2022",
     "source_sha256": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
-    "qualified_pipeline_file_sha256": "e95c674ae63b5af9add9b5a2bca9e651f2517add674805fac629b73335fd1afd",
-    "qualified_parse_result_sha256": "52dce521d4b46db820ccfac9cdcc61bd83b78f3b808144eb5e29a1550114a717",
-    "qualified_article_count": 64,
+    "qualified_pipeline_file_sha256": "e79ca1d6c5e885df1c2f8b11c2aa3cb783e5df709328bf9612135b1ef0b34609",
+    "qualified_parse_result_sha256": "2b53980c75987710afd949466460010a622c6141881ee95c1d5fb7756e20e442",
+    "qualified_article_count": 62,
     "corpus_package_path": "competition/corpus/gb55023-qualified-parse-result.json",
-    "corpus_package_sha256": "9f8d0e9fa1bd257e5b0fb7a27465242a1b02c0a46cc366d3dd2016908cad596c"
+    "corpus_package_sha256": "4a240614213ff5652dae5f7a5a07063b9848df1e54ccd42830320745947f6fd7"
   },
   "plans": [
     {
@@ -19,14 +19,15 @@
       "pdf_sha256": "5f3ebde3bd2c0a6d6dccb516c3029fd336558e198ebeccad07d29ca0d03fd8dc"
     },
     {
-      "document_id": "4441b5a1-a167-4e26-9711-d90a8e85f71d",
-      "description": "经八纬一棚户区改造 A 区建设项目 — 悬挑脚手架工程专项施工方案",
-      "pdf_sha256": "b0f8c55d2f02b9c826dd1c8001a56582b470bd80ec5d5ad8368235dcb0058462"
+      "document_id": "04039d98-4131-422a-b29a-256bade04a6a",
+      "description": "和景家园 — 施工组织设计",
+      "pdf_sha256": "41f4ea2e7d999f298309f4ecb25491cc79125d422cb84484963de36325166b95"
     }
   ],
   "cases": [
     {
       "case_id": "CASE-A",
+      "case_kind": "FINDING",
       "document_id": "f42886ef-83ec-454c-86e2-34d5c238ca0f",
       "standard_id": "55023b3b-1b00-4000-8000-000000000001",
       "article_number": "4.4.15",
@@ -70,6 +71,7 @@
     },
     {
       "case_id": "CASE-B",
+      "case_kind": "FINDING",
       "document_id": "f42886ef-83ec-454c-86e2-34d5c238ca0f",
       "standard_id": "55023b3b-1b00-4000-8000-000000000001",
       "article_number": "4.4.16",
@@ -113,37 +115,25 @@
     },
     {
       "case_id": "CASE-C",
-      "document_id": "4441b5a1-a167-4e26-9711-d90a8e85f71d",
-      "standard_id": "55023b3b-1b00-4000-8000-000000000001",
-      "article_number": "4.4.15",
-      "request": {
-        "page_number": 23,
-        "source_text": "1、连墙件采用刚性连接，垂直间距为3.60m，水平间距为4.5m。",
-        "char_start": 322,
-        "retrieval_query": "GB 55023-2022 4.4.15",
-        "standard_ids": [
-          "55023b3b-1b00-4000-8000-000000000001"
-        ],
-        "top_k": 5,
-        "evidence_id": "chunk_a62c9ad11c39e8cde40e2d2267393357e8a2ca0258cc0c98a85d7d3891e1d182",
-        "requirement": {
-          "char_start": 0,
-          "char_end": 148,
-          "source_text": "4.4.15 脚手架可调底座和可调托撑调节螺杆插入脚手架立杆内\n的长度不应小于150mm，且调节螺杆伸出长度应经计算确定，\n并应符合下列规定：\n1 当插入的立杆钢管直径为 42mm 时，伸出长度不应大\n于200mm;\n2 当插入的立杆钢管直径为48.3mm及以上时，伸出长度\n不应大于500mm。"
-        },
-        "plan_facts": []
+      "case_kind": "REVIEW_GAP",
+      "document_id": "04039d98-4131-422a-b29a-256bade04a6a",
+      "plan_locator": {
+        "physical_page": 8,
+        "page_char_start": 107,
+        "page_char_end": 142,
+        "source_text": "（3）、套管预埋必须做到同水平标高的套管标高偏差必控制在5mm 之内，",
+        "source_text_sha256": "7450ef276b244603d4c2bc4930bba8b94d9381b20d4eb39c33bec7862ad40faf"
       },
       "qualification_assertion": {
-        "expected_decision": "INSUFFICIENT_INFORMATION",
-        "expected_reason_code": "REQUIREMENT_DECOMPOSITION_UNRESOLVED",
-        "expected_scope": "REVIEW_UNIT_REQUIREMENT",
-        "expected_finding_id": "finding_9c02ed3517c6826c4d1228f31140a0761183ade0e33000d70c9f6127f0faa408",
-        "expected_comparison_id": "comparison_18bbef76cfb38d706697742a6eb51175281177817e068a3bf1dba27b085ddf36",
-        "expected_review_unit_id": "reviewunit_fd93f37210dce77f1f104c99e0c689866ae2bd84c034f5e5d2abcc8c2c99dab7",
-        "expected_evidence_id": "chunk_a62c9ad11c39e8cde40e2d2267393357e8a2ca0258cc0c98a85d7d3891e1d182",
-        "expected_requirement_id": "requirement_00af548d7c047fe5f3d7916a02fc113bb14751e9f8645d4e29bd7016c0c5b797",
-        "expected_plan_fact_ids": [],
-        "expected_article_id": "article_9ae26287cadee0b06f53f037eff78a8512db782842a95f8ad0cb356b1174dfb6"
+        "expected_item_kind": "REVIEW_GAP",
+        "expected_terminal_class": "CANDIDATE_TERMINAL",
+        "expected_terminal_status": "NO_STANDARD_SCOPE",
+        "expected_finding_absent": true,
+        "expected_comparison_absent": true,
+        "expected_decision_absent": true,
+        "expected_standard_authority_absent": true,
+        "expected_article_authority_absent": true,
+        "expected_requirement_authority_absent": true
       }
     }
   ]

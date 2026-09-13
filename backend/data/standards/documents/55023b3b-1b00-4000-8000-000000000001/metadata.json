@@ -6,11 +6,11 @@
   "standard_display_code": "GB 55023-2022",
   "identity_status": "CONFIRMED",
   "identity_confidence": "HIGH",
-  "identity_reason": "Curated official-source binding: Exact historically qualified official artifact recovered from the government attachment.",
+  "identity_reason": "Trusted official-source authority: b3b-q1-gb55023-2022-official-source-v1",
   "edition": null,
   "publish_date": null,
   "effective_date": null,
-  "source_filename": "施工脚手架通用规范_GB55023-2022_official.pdf",
+  "source_filename": "sha256-bound-official-source.pdf",
   "source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
   "page_count": 17,
   "parse_status": "PARSED",
@@ -21,7 +21,7 @@
   "capability_status": "TEXT_READY",
   "capability_reason": "usable structured text layer detected",
   "source_kind": "OCR_TEXT",
-  "ocr_run_id": "ocr_012669731bfa7dbe8faed9b619fb0b713e552c453848a91bd202e3265a8c4673",
+  "ocr_run_id": "ocr_d801d55a7e4bb98a02d769fd53d108017df36d39207b9b5649d6116cf565a869",
   "ocr_execution_id": "execution_f40b89f458a9a5e32b81b717617f1f353bddd3ee6af210aab70dea9aa938f4c4",
   "ocr_quality_state": "OCR_LOW_CONFIDENCE",
   "ocr_provider": {
@@ -50,11 +50,11 @@
     "canonical_standard_code": "GB55023-2022",
     "display_standard_code": "GB 55023-2022",
     "standard_name": "施工脚手架通用规范",
-    "binding_reason": "Exact historically qualified official artifact recovered from the government attachment.",
-    "binding_provenance": "B.3C.3-S1-Q1-SRC1 EXACT_HISTORICAL_OFFICIAL_SOURCE_RECOVERED",
+    "binding_reason": "Resolved from trusted checksum-indexed authority.",
+    "binding_provenance": "b3b-q1-gb55023-2022-official-source-v1: Application-owned exact-checksum authority recovered from the qualified government attachment.",
     "confirmed": true
   },
-  "ocr_corpus_semantics_version": "v0.4-b.3c.3-s1-r1-ocr-corpus",
-  "created_at": "2026-08-26T13:32:04.117708Z",
-  "updated_at": "2026-08-26T13:34:04.584599Z"
+  "ocr_corpus_semantics_version": "v0.4-b.3b-q1-r1-ocr-corpus",
+  "created_at": "2026-09-06T08:41:32.481566Z",
+  "updated_at": "2026-09-06T08:41:32.502570Z"
 }

@@ -12,6 +12,8 @@ from app.core.config import Settings
 from app.schemas.ocr import (
     OCRAcceptedPage,
     OCRAcceptedSpan,
+    OCRCapabilityDecision,
+    OCRCapabilityState,
     OCRIssueCode,
     OCRModelArtifact,
     OCRPageQualityAssessment,
@@ -27,6 +29,7 @@ from app.schemas.ocr import (
     OCRVisualSupportGeometrySource,
     OfficialSourceBinding,
     SourceKind,
+    TrustedOfficialSourceRecord,
 )
 from app.schemas.standards import StandardDocument, StandardPage
 from app.schemas.standards_retrieval import RetrievalMethod
@@ -52,6 +55,7 @@ from app.services.ocr.run_identity import (
     semantic_ocr_run_id,
     stable_line_id,
 )
+from app.services.ocr.trusted_source_registry import TrustedOfficialSourceRegistry
 from app.services.retrieval.hit_factory import make_hit
 from app.services.retrieval.models import RetrievalRecord
 from app.services.retrieval.retrieval_manifest_service import RetrievalManifestService
@@ -342,7 +346,17 @@ def test_ocr_evidence_exposes_official_source_and_raw_spans() -> None:
         official_source_binding=_binding(),
         ocr_corpus_semantics_version=OCR_CORPUS_SEMANTICS_VERSION,
     )
-    parsed = StandardParserService().parse(document, pages)
+    trusted = TrustedOfficialSourceRecord(
+        source_checksum=SOURCE_CHECKSUM,
+        canonical_standard_code="GB55023-2022",
+        display_standard_code="GB 55023-2022",
+        standard_name="Construction scaffold standard",
+        authority_id="test-qualified-source",
+        authority_provenance="controlled test fixture",
+    )
+    parsed = StandardParserService(
+        trusted_sources=TrustedOfficialSourceRegistry(records=(trusted,))
+    ).parse(document, pages)
     hit = make_hit(
         RetrievalRecord(document=parsed.document, article=parsed.articles[0]),
         rank=1,
@@ -355,7 +369,7 @@ def test_ocr_evidence_exposes_official_source_and_raw_spans() -> None:
     assert hit.evidence.ocr_run_quality_state == assessment.state
     assert hit.evidence.raw_source_span_refs[0].raw_polygon
     assert hit.evidence.official_source_binding.binding_method.value == "CURATED_OFFICIAL_SOURCE"
-    assert "Curated official-source binding" in hit.evidence.identity_reason
+    assert "Trusted official-source authority" in hit.evidence.identity_reason
 
 
 def test_same_accepted_ocr_input_has_stable_article_identity() -> None:
@@ -595,6 +609,15 @@ def test_worker_failure_is_persisted_and_rejected_without_parser_entry(tmp_path)
             })
             return RenderedOCRPage(b"png", metadata)
 
+    class RequiredCapability:
+        def decide(self, **kwargs):
+            return OCRCapabilityDecision(
+                state=OCRCapabilityState.REQUIRED,
+                document_status="OCR_REQUIRED",
+                authorized_page_numbers=(1,),
+                reason="controlled failure-path fixture",
+            )
+
     standards = StandardRepository(Settings(standards_dir=tmp_path / "standards"))
     ocr_repository = OCRRepository(standards)
     document = _document(source_checksum=checksum)
@@ -602,6 +625,8 @@ def test_worker_failure_is_persisted_and_rejected_without_parser_entry(tmp_path)
         renderer=FakeRenderer(),
         provider=FailingProvider(),
         repository=ocr_repository,
+        capability_gate=RequiredCapability(),
+        trusted_sources=TrustedOfficialSourceRegistry(records=()),
     ).run(
         document=document,
         pdf_path=pdf_path,

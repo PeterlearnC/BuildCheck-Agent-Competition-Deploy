@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,11 @@ from fastapi.testclient import TestClient
 
 from app.core.config import Settings
 from app.main import app
+import app.services.competition_demo_service as competition_demo_service_module
+from app.services.ocr.run_identity import (
+    OCR_CORPUS_SEMANTICS_VERSION,
+    OCR_QUALITY_GATE_VERSION,
+)
 from app.services.competition_demo_service import CompetitionDemoService
 
 
@@ -19,6 +25,7 @@ client = TestClient(app)
 
 EXPECTED_CASES = {
     "CASE-A": {
+        "item_kind": "FINDING",
         "finding_id": "finding_993e8847b86de084c9d1942a9771bf3dab07200260499f7d38d00292060e818b",
         "decision": "COMPLIANT",
         "label": "局部符合",
@@ -26,6 +33,7 @@ EXPECTED_CASES = {
         "article": "4.4.15",
     },
     "CASE-B": {
+        "item_kind": "FINDING",
         "finding_id": "finding_530869523a03ddacf658e167fcff74f5b32b68f324533711a0b38538298f0c73",
         "decision": "NON_COMPLIANT",
         "label": "局部不符合",
@@ -33,11 +41,16 @@ EXPECTED_CASES = {
         "article": "4.4.16",
     },
     "CASE-C": {
-        "finding_id": "finding_9c02ed3517c6826c4d1228f31140a0761183ade0e33000d70c9f6127f0faa408",
-        "decision": "INSUFFICIENT_INFORMATION",
-        "label": "局部信息不足",
-        "reason": "REQUIREMENT_DECOMPOSITION_UNRESOLVED",
-        "article": "4.4.15",
+        "item_kind": "REVIEW_GAP",
+        "document_id": "04039d98-4131-422a-b29a-256bade04a6a",
+        "document_sha256": "41f4ea2e7d999f298309f4ecb25491cc79125d422cb84484963de36325166b95",
+        "terminal_class": "CANDIDATE_TERMINAL",
+        "terminal_status": "NO_STANDARD_SCOPE",
+        "physical_page": 8,
+        "page_char_start": 107,
+        "page_char_end": 142,
+        "source_text": "（3）、套管预埋必须做到同水平标高的套管标高偏差必控制在5mm 之内，",
+        "source_text_sha256": "7450ef276b244603d4c2bc4930bba8b94d9381b20d4eb39c33bec7862ad40faf",
     },
 }
 
@@ -50,8 +63,51 @@ FORBIDDEN_RESPONSE_KEYS = {
     "expected_reason",
     "expected_reason_code",
     "expected_finding_id",
+    "expected_comparison_id",
+    "expected_review_gap_id",
+    "expected_workspace_id",
     "expected_scope",
 }
+
+
+@pytest.fixture(scope="module", autouse=True)
+def qualified_ocr_authority_for_presentation_tests(tmp_path_factory):
+    """Keep presentation tests isolated from the committed qualification artifact."""
+    source = PROJECT_ROOT / "competition/corpus/gb55023-ocr-qualification-manifest.json"
+    raw = json.loads(source.read_text(encoding="utf-8"))
+    raw.update(
+        {
+            "execution_artifact_sha256": "1" * 64,
+            "raw_ocr_result_artifact_sha256": "2" * 64,
+            "quality_assessment_artifact_sha256": "3" * 64,
+            "accepted_boundary_artifact_sha256": "4" * 64,
+            "quality_gate_version": OCR_QUALITY_GATE_VERSION,
+            "ocr_corpus_semantics_version": OCR_CORPUS_SEMANTICS_VERSION,
+            "qualification_status": "QUALIFIED",
+            "qualification_reason": "Synthetic complete chain for presentation tests only.",
+        }
+    )
+    path = tmp_path_factory.mktemp("ocr-ui-qualification") / "qualified.json"
+    path.write_text(json.dumps(raw, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    original = competition_demo_service_module.load_corpus_package
+
+    def load_qualified(manifest, project_root):
+        return original(
+            manifest,
+            project_root,
+            qualification_manifest_path=path,
+            qualification_manifest_sha256=digest,
+        )
+
+    patcher = pytest.MonkeyPatch()
+    patcher.setattr(
+        competition_demo_service_module,
+        "load_corpus_package",
+        load_qualified,
+    )
+    yield
+    patcher.undo()
 
 
 def _keys(value):
@@ -105,6 +161,34 @@ def test_existing_application_routes_remain_available(path: str) -> None:
     assert client.get(path).status_code == 200
 
 
+def test_openapi_success_response_discriminates_finding_and_review_gap() -> None:
+    schema = client.get("/openapi.json").json()
+    response_schema = schema["paths"][
+        "/api/v1/competition/demo/cases/{case_id}/run"
+    ]["post"]["responses"]["200"]["content"]["application/json"]["schema"]
+    assert response_schema["discriminator"] == {
+        "propertyName": "item_kind",
+        "mapping": {
+            "FINDING": "#/components/schemas/CompetitionFindingCaseRunResult",
+            "REVIEW_GAP": "#/components/schemas/CompetitionReviewGapCaseRunResult",
+        },
+    }
+    assert len(response_schema["oneOf"]) == 2
+    gap_properties = schema["components"]["schemas"][
+        "CompetitionReviewGapCaseRunResult"
+    ]["properties"]
+    assert {
+        "finding_id",
+        "comparison_id",
+        "decision",
+        "decision_scope",
+        "standard_evidence",
+        "requirement_id",
+        "article_number",
+        "standard_id",
+    }.isdisjoint(gap_properties)
+
+
 def test_metadata_reports_verified_runtime_ready(metadata_payload: dict) -> None:
     assert metadata_payload["mode"] == "QUALIFIED_SAMPLE_MODE"
     assert metadata_payload["status"] == "READY"
@@ -118,17 +202,21 @@ def test_metadata_exposes_only_neutral_case_information(metadata_payload: dict) 
     cases = {item["case_id"]: item for item in metadata_payload["cases"]}
     assert set(cases) == set(EXPECTED_CASES)
     for case_id, item in cases.items():
-        assert set(item) == {
+        common = {
             "case_id",
+            "item_kind",
             "label",
             "description",
             "document_id",
             "page_number",
-            "standard_code",
-            "article_number",
         }
-        assert EXPECTED_CASES[case_id]["decision"] not in str(item)
-        assert EXPECTED_CASES[case_id]["finding_id"] not in str(item)
+        if item["item_kind"] == "FINDING":
+            assert set(item) == common | {"standard_code", "article_number"}
+            assert EXPECTED_CASES[case_id]["decision"] not in str(item)
+            assert EXPECTED_CASES[case_id]["finding_id"] not in str(item)
+        else:
+            assert set(item) == common
+            assert case_id == "CASE-C"
 
 
 def test_metadata_contains_no_qualification_assertion_leakage(metadata_payload: dict) -> None:
@@ -177,6 +265,10 @@ def test_path_traversal_case_identifier_is_rejected(case_path: str) -> None:
         {"plan_fact": {"char_start": 0}},
         {"expected_decision": "COMPLIANT"},
         {"review_finding": {"decision": "COMPLIANT"}},
+        {"workspace_id": "findingsworkspace_" + "0" * 64},
+        {"review_gap_id": "reviewgap_" + "0" * 64},
+        {"status": "NO_STANDARD_SCOPE"},
+        {"decision": "REVIEW_GAP"},
         {"manifest_path": "../manifest.json"},
         {"corpus_path": "../corpus.json"},
         {"filesystem_path": "C:/authority.json"},
@@ -189,11 +281,14 @@ def test_run_endpoint_rejects_all_caller_authority_payloads(payload: dict) -> No
     assert "不接受请求体" in response.json()["detail"]
 
 
-@pytest.mark.parametrize("case_id", ["CASE-A", "CASE-B", "CASE-C"])
-def test_live_cases_match_qualified_c3_authority(case_id: str, live_results: dict[str, dict]) -> None:
+@pytest.mark.parametrize("case_id", ["CASE-A", "CASE-B"])
+def test_live_finding_cases_match_qualified_c3_authority(
+    case_id: str, live_results: dict[str, dict]
+) -> None:
     result = live_results[case_id]
     expected = EXPECTED_CASES[case_id]
     assert result["status"] == "SUCCESS"
+    assert result["item_kind"] == "FINDING"
     assert result["finding_id"] == expected["finding_id"]
     assert result["decision"] == expected["decision"]
     assert result["decision_label"] == expected["label"]
@@ -203,6 +298,45 @@ def test_live_cases_match_qualified_c3_authority(case_id: str, live_results: dic
     assert result["plan_evidence"]["exact_text"]
     assert result["standard_evidence"]["exact_requirement_text"]
     assert result["summary"]
+
+
+def test_case_c_is_genuine_d6_review_gap_without_finding_authority(
+    live_results: dict[str, dict]
+) -> None:
+    result = live_results["CASE-C"]
+    expected = EXPECTED_CASES["CASE-C"]
+    assert result["status"] == "SUCCESS"
+    assert result["item_kind"] == "REVIEW_GAP"
+    assert result["terminal_class"] == expected["terminal_class"]
+    assert result["terminal_status"] == expected["terminal_status"]
+    assert result["review_gap_id"].startswith("reviewgap_")
+    assert result["technical_provenance"]["workspace_id"].startswith(
+        "findingsworkspace_"
+    )
+    assert result["finding_absent"] is True
+    assert result["comparison_absent"] is True
+    assert result["decision_absent"] is True
+    assert result["standard_authority_absent"] is True
+    assert result["article_authority_absent"] is True
+    assert result["requirement_authority_absent"] is True
+    assert {
+        "finding_id",
+        "comparison_id",
+        "decision",
+        "decision_scope",
+        "standard_evidence",
+        "requirement_id",
+        "article_number",
+        "standard_id",
+    }.isdisjoint(result)
+    evidence = result["plan_evidence"]
+    assert evidence["document_id"] == expected["document_id"]
+    assert evidence["pdf_sha256"] == expected["document_sha256"]
+    assert evidence["physical_page"] == expected["physical_page"]
+    assert evidence["page_char_start"] == expected["page_char_start"]
+    assert evidence["page_char_end"] == expected["page_char_end"]
+    assert evidence["exact_text"] == expected["source_text"]
+    assert evidence["text_sha256"] == expected["source_text_sha256"]
 
 
 @pytest.mark.parametrize("case_id", ["CASE-A", "CASE-B", "CASE-C"])
@@ -222,21 +356,29 @@ def test_case_b_presents_plan_control_conflict_not_field_measurement(live_result
     assert "现场间隙为3mm" not in serialized
 
 
-def test_case_c_is_successful_uncertainty_not_safe_failure(live_results: dict[str, dict]) -> None:
+def test_case_c_is_review_gap_not_compliance_uncertainty_finding(
+    live_results: dict[str, dict]
+) -> None:
     result = live_results["CASE-C"]
     assert result["status"] == "SUCCESS"
-    assert result["missing_information"]
-    assert "确定性违规结论" in result["local_explanation"]
+    assert result["item_kind"] == "REVIEW_GAP"
+    assert "规范范围权威" in result["local_explanation"]
+    for false_verdict in ("方案合规", "方案不合规", "符合 GB", "违反 GB"):
+        assert false_verdict not in result["local_explanation"]
     assert "SAFE_FAILURE" not in str(result)
 
 
 def test_presentation_dto_keeps_dual_citations_and_provenance_separate(live_results: dict[str, dict]) -> None:
-    for result in live_results.values():
+    for result in (live_results["CASE-A"], live_results["CASE-B"]):
         assert result["plan_evidence"]["document_id"] == result["technical_provenance"]["document_id"]
         assert result["plan_evidence"]["pdf_sha256"] == result["technical_provenance"]["document_sha256"]
         assert result["standard_evidence"]["evidence_id"] == result["technical_provenance"]["evidence_id"]
         assert result["standard_evidence"]["requirement_id"] == result["technical_provenance"]["requirement_id"]
         assert result["finding_id"] == result["technical_provenance"]["finding_id"]
+    gap = live_results["CASE-C"]
+    assert gap["plan_evidence"]["document_id"] == gap["technical_provenance"]["document_id"]
+    assert gap["plan_evidence"]["pdf_sha256"] == gap["technical_provenance"]["document_sha256"]
+    assert gap["review_gap_id"] == gap["technical_provenance"]["review_gap_id"]
 
 
 def test_frontend_contains_no_prebuilt_case_authority() -> None:
@@ -249,6 +391,8 @@ def test_frontend_contains_no_prebuilt_case_authority() -> None:
     assert "finding_993e8847" not in combined
     assert "finding_53086952" not in combined
     assert "finding_9c02ed35" not in combined
+    assert "reviewgap_09b31a" not in combined
+    assert "findingsworkspace_90fb" not in combined
 
 
 def test_frontend_javascript_uses_safe_dom_and_same_origin_fetch() -> None:
@@ -260,6 +404,26 @@ def test_frontend_javascript_uses_safe_dom_and_same_origin_fetch() -> None:
     assert "http://" not in javascript
     assert "https://" not in javascript
     assert 'const API_ROOT = "/api/v1/competition/demo"' in javascript
+
+
+def test_frontend_has_distinct_review_gap_rendering_without_fake_finding_card() -> None:
+    javascript = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+    styles = (STATIC_ROOT / "styles.css").read_text(encoding="utf-8")
+    html = (STATIC_ROOT / "index.html").read_text(encoding="utf-8")
+    assert 'if (result.item_kind === "FINDING")' in javascript
+    assert 'if (result.item_kind === "REVIEW_GAP")' in javascript
+    assert "function renderReviewGapResult" in javascript
+    assert "明确审查缺口" in javascript
+    assert "NO_STANDARD_SCOPE" in javascript
+    assert ".review-gap-header" in styles
+    assert "Finding / Review Gap" in html
+    gap_renderer = javascript.split("function renderReviewGapResult", 1)[1].split(
+        "function renderResult", 1
+    )[0]
+    assert "DECISION_LABELS" not in gap_renderer
+    assert "result.standard_evidence" not in gap_renderer
+    assert "result.finding_id" not in gap_renderer
+    assert "result.comparison_id" not in gap_renderer
 
 
 def test_competition_ui_contains_no_c4_workflow_controls() -> None:
@@ -283,7 +447,7 @@ def test_affirmative_whole_plan_wording_is_absent() -> None:
 
 def test_packaged_demo_authority_files_remain_byte_identical() -> None:
     expected = {
-        "competition/demo-manifest.json": "e64bf66d99a5d0f25e55616e4e04fc153170964f2e45b3eb3ecdc9106d4f34d2",
-        "competition/corpus/gb55023-qualified-parse-result.json": "9f8d0e9fa1bd257e5b0fb7a27465242a1b02c0a46cc366d3dd2016908cad596c",
+        "competition/demo-manifest.json": "30ff01416e651cf72404e2b2808f496e5bd6323fe0b4415fa13ef1c1d678da84",
+        "competition/corpus/gb55023-qualified-parse-result.json": "4a240614213ff5652dae5f7a5a07063b9848df1e54ccd42830320745947f6fd7",
     }
     assert {path: _sha256(PROJECT_ROOT / path) for path in expected} == expected

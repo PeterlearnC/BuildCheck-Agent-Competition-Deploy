@@ -6,6 +6,7 @@ from pathlib import Path
 
 from app.schemas.ocr import (
     OCRAcceptedPage,
+    OCRCapabilityState,
     OCRPageResult,
     OCRQualityState,
     OCRRun,
@@ -20,6 +21,7 @@ from app.schemas.standards import (
     StandardParseResult,
 )
 from app.services.ocr.accepted_boundary import OCRAcceptedBoundaryService
+from app.services.ocr.capability_gate import OCRCapabilityError, OCRCapabilityGate
 from app.services.ocr.ocr_repository import OCRRepository
 from app.services.ocr.page_renderer import OCRPageRenderer
 from app.services.ocr.provider import OCRProvider
@@ -32,6 +34,7 @@ from app.services.ocr.run_identity import (
     execution_id,
     semantic_ocr_run_id,
 )
+from app.services.ocr.trusted_source_registry import TrustedOfficialSourceRegistry
 from app.services.standards.standard_parser_service import StandardParserService
 
 
@@ -53,13 +56,19 @@ class ControlledOCRPilotService:
         quality_gate: OCRQualityGate | None = None,
         boundary: OCRAcceptedBoundaryService | None = None,
         parser: StandardParserService | None = None,
+        capability_gate: OCRCapabilityGate | None = None,
+        trusted_sources: TrustedOfficialSourceRegistry | None = None,
     ) -> None:
         self.renderer = renderer
         self.provider = provider
         self.repository = repository
         self.quality_gate = quality_gate or OCRQualityGate()
         self.boundary = boundary or OCRAcceptedBoundaryService()
-        self.parser = parser or StandardParserService()
+        self.capability_gate = capability_gate or OCRCapabilityGate()
+        self.trusted_sources = trusted_sources or TrustedOfficialSourceRegistry()
+        self.parser = parser or StandardParserService(
+            trusted_sources=self.trusted_sources
+        )
 
     def run(
         self,
@@ -67,15 +76,32 @@ class ControlledOCRPilotService:
         document: StandardDocument,
         pdf_path: Path,
         page_numbers: list[int],
-        binding: OfficialSourceBinding,
+        binding: OfficialSourceBinding | None = None,
     ) -> ControlledOCRResult:
         checksum = self._checksum(pdf_path)
         if checksum.lower() != document.source_checksum.lower():
             raise ValueError("Official PDF checksum does not match StandardDocument.")
-        if binding.source_checksum.lower() != checksum.lower() or not binding.confirmed:
-            raise ValueError("A confirmed curated binding for this exact source is required.")
-        if not page_numbers:
-            raise ValueError("Controlled OCR requires at least one explicit page.")
+        trusted_record = self.trusted_sources.resolve(
+            source_checksum=checksum,
+            requested=binding,
+        )
+        trusted_binding = (
+            self.trusted_sources.binding(trusted_record)
+            if trusted_record is not None
+            else None
+        )
+        capability = self.capability_gate.decide(
+            pdf_path=pdf_path,
+            requested_page_numbers=page_numbers,
+            provider=self.provider,
+        )
+        if capability.state not in {
+            OCRCapabilityState.REQUIRED,
+            OCRCapabilityState.MIXED,
+        }:
+            raise OCRCapabilityError(
+                f"Controlled OCR is not authorized: {capability.state.value}."
+            )
 
         raw_pages = []
         for page_number in page_numbers:
@@ -110,7 +136,7 @@ class ControlledOCRPilotService:
             pages=raw_pages,
         )
         self.repository.save_raw_run(document.standard_id, run)
-        assessment = self.quality_gate.assess(run, binding)
+        assessment = self.quality_gate.assess(run, trusted_binding)
         self.repository.save_quality(document.standard_id, run, assessment)
         parser_boundary = self.boundary.parser_boundary(run, assessment)
         accepted = parser_boundary.accepted_pages
@@ -126,7 +152,7 @@ class ControlledOCRPilotService:
                     "ocr_execution_id": run.execution_id,
                     "ocr_quality_state": assessment.state,
                     "ocr_provider": run.provider,
-                    "official_source_binding": binding,
+                    "official_source_binding": trusted_binding,
                     "ocr_corpus_semantics_version": OCR_CORPUS_SEMANTICS_VERSION,
                 }
             )

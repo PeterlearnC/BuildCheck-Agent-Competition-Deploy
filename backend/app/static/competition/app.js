@@ -1,6 +1,8 @@
 "use strict";
 
 const API_ROOT = "/api/v1/competition/demo";
+const REPORT_API_PATH = (documentId) =>
+  `/api/v1/documents/${encodeURIComponent(documentId)}/review/report`;
 const DECISION_LABELS = Object.freeze({
   COMPLIANT: "局部符合",
   NON_COMPLIANT: "局部不符合",
@@ -84,14 +86,17 @@ function renderCases(metadata) {
   const grid = document.querySelector("#case-grid");
   grid.replaceChildren();
   metadata.cases.forEach((reviewCase) => {
-    const card = element("article", "case-card");
+    const card = element("article", `case-card ${reviewCase.item_kind === "REVIEW_GAP" ? "is-review-gap" : "is-finding"}`);
     card.dataset.caseId = reviewCase.case_id;
     const eyebrow = element("div", "case-eyebrow");
     eyebrow.append(
       element("span", "case-id", reviewCase.case_id),
       element("span", "case-location", `第 ${reviewCase.page_number} 页`),
     );
-    const citation = element("p", "case-citation", `${reviewCase.standard_code} · 第 ${reviewCase.article_number} 条`);
+    const citationText = reviewCase.item_kind === "REVIEW_GAP"
+      ? "D.6 · REVIEW GAP"
+      : `${reviewCase.standard_code} · 第 ${reviewCase.article_number} 条`;
+    const citation = element("p", "case-citation", citationText);
     const button = element("button", "run-button", "运行局部审查");
     button.type = "button";
     button.disabled = !ready;
@@ -176,7 +181,7 @@ function provenanceDetails(result) {
   return details;
 }
 
-function renderResult(result) {
+function renderFindingResult(result) {
   const expectedLabel = DECISION_LABELS[result.decision];
   if (!expectedLabel || expectedLabel !== result.decision_label) {
     renderSafeFailure("返回的局部判断标签未通过一致性校验。");
@@ -260,6 +265,113 @@ function renderResult(result) {
   section.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function reviewGapProvenanceDetails(result) {
+  const details = element("details", "provenance review-gap-provenance");
+  details.append(element("summary", "", "D.6 技术溯源信息"));
+  const list = element("dl", "provenance-grid");
+  const values = [
+    ["ReviewGap ID", result.technical_provenance.review_gap_id],
+    ["Workspace ID", result.technical_provenance.workspace_id],
+    ["WholePlanReview ID", result.technical_provenance.whole_plan_review_id],
+    ["Document ID", result.technical_provenance.document_id],
+    ["PDF SHA-256", result.technical_provenance.document_sha256],
+    ["Candidate Trace ID", result.technical_provenance.candidate_trace_id],
+    ["Candidate ID", result.technical_provenance.candidate_id],
+    ["Identity Version", result.technical_provenance.identity_version],
+    ["Projection Version", result.technical_provenance.projection_version],
+  ];
+  values.forEach(([term, value]) => list.append(element("dt", "", term), element("dd", "", value)));
+  details.append(list);
+  return details;
+}
+
+function renderReviewGapResult(result) {
+  const forbiddenResultFields = [
+    "finding_id", "comparison_id", "decision", "decision_label", "decision_scope",
+    "reason_code", "standard_evidence", "requirement_id", "article_number",
+  ];
+  const absenceFlags = [
+    result.finding_absent,
+    result.comparison_absent,
+    result.decision_absent,
+    result.standard_authority_absent,
+    result.article_authority_absent,
+    result.requirement_authority_absent,
+  ];
+  if (
+    result.terminal_class !== "CANDIDATE_TERMINAL"
+    || result.terminal_status !== "NO_STANDARD_SCOPE"
+    || forbiddenResultFields.some((key) => Object.prototype.hasOwnProperty.call(result, key))
+    || absenceFlags.some((value) => value !== true)
+  ) {
+    renderSafeFailure("返回的 D.6 审查缺口未通过权威边界校验。");
+    return;
+  }
+
+  const section = document.querySelector("#result-section");
+  section.hidden = false;
+  document.querySelector("#result-message").textContent = result.message;
+  const content = document.querySelector("#result-content");
+  content.replaceChildren();
+
+  const header = element("article", "review-gap-header");
+  const stateLockup = element("div", "review-gap-lockup");
+  stateLockup.append(
+    element("span", "decision-overline", "MACHINE REVIEW GAP"),
+    element("strong", "review-gap-label", "明确审查缺口"),
+    element("span", "review-gap-code", result.terminal_status),
+  );
+  const explanation = element("div", "finding-explanation");
+  explanation.append(
+    element("p", "finding-context", "当前机器工作区"),
+    element("p", "summary", result.local_explanation),
+    element("p", "local-explanation", "此状态没有 Finding、ComplianceComparison 或合规决定。"),
+  );
+  header.append(stateLockup, explanation);
+
+  const plan = result.plan_evidence;
+  const planPanel = evidencePanel(
+    "方案侧审查目标",
+    `第 ${plan.physical_page} 页 · ${plan.document_display_name}`,
+    plan.exact_text,
+    [
+      ["字符位置", `${plan.page_char_start}–${plan.page_char_end}`],
+      ["文本 SHA-256", plan.text_sha256],
+    ],
+    "plan-evidence review-gap-plan-evidence",
+  );
+  const gapPanel = element("article", "review-gap-state-panel");
+  gapPanel.append(
+    element("p", "panel-kicker", "D.6 TERMINAL STATE"),
+    element("h3", "", "审查缺口状态"),
+    element("strong", "review-gap-status", result.terminal_status),
+    element("p", "", "当前管线未建立标准范围权威，因此未进入规范要求分解和合规比较。"),
+    element("span", "scope-code", result.terminal_class),
+  );
+  const trace = element("div", "review-gap-trace");
+  trace.append(planPanel, gapPanel);
+
+  content.append(
+    header,
+    trace,
+    element("p", "result-scope-notice", result.scope_notice),
+    reviewGapProvenanceDetails(result),
+  );
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderResult(result) {
+  if (result.item_kind === "FINDING") {
+    renderFindingResult(result);
+    return;
+  }
+  if (result.item_kind === "REVIEW_GAP") {
+    renderReviewGapResult(result);
+    return;
+  }
+  renderSafeFailure("返回的机器审查类型不可识别。");
+}
+
 function renderSafeFailure(detail) {
   const section = document.querySelector("#result-section");
   section.hidden = false;
@@ -319,3 +431,88 @@ async function loadMetadata() {
 
 document.querySelector("#refresh-status").addEventListener("click", loadMetadata);
 loadMetadata();
+
+const reportViewerState = { objectUrl: null };
+
+function releaseReportArtifact() {
+  if (reportViewerState.objectUrl) {
+    URL.revokeObjectURL(reportViewerState.objectUrl);
+    reportViewerState.objectUrl = null;
+  }
+}
+
+function artifactFilename(response) {
+  const disposition = response.headers.get("Content-Disposition") || "";
+  const match = /filename="([^"]+)"/.exec(disposition);
+  if (!match || /[/\\\r\n]|\.\./.test(match[1])) {
+    throw new Error("报告制品文件名未通过安全校验。");
+  }
+  return match[1];
+}
+
+function setReportViewerBusy(busy) {
+  document.querySelector("#load-report").disabled = busy;
+  document.querySelector("#report-viewer-status").textContent = busy
+    ? "正在请求冻结报告制品……"
+    : "报告请求已完成。";
+}
+
+async function loadReportArtifact(event) {
+  event.preventDefault();
+  const statusNode = document.querySelector("#report-viewer-status");
+  const documentId = document.querySelector("#report-document-id").value.trim();
+  const format = document.querySelector("#report-format").value;
+  let commands;
+  try {
+    commands = JSON.parse(document.querySelector("#report-commands").value || "[]");
+    if (!Array.isArray(commands)) throw new Error("commands must be an array");
+  } catch {
+    statusNode.textContent = "人工复核命令必须是 JSON 数组。";
+    return;
+  }
+
+  setReportViewerBusy(true);
+  try {
+    const response = await fetch(REPORT_API_PATH(documentId), {
+      method: "POST",
+      headers: { Accept: format === "HTML" ? "text/html" : "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ commands, format, delivery: "INLINE" }),
+    });
+    if (!response.ok) {
+      throw new Error(`报告请求失败（HTTP ${response.status}）。`);
+    }
+
+    const filename = artifactFilename(response);
+    const mediaType = response.headers.get("Content-Type") || "application/octet-stream";
+    const artifactBytes = await response.arrayBuffer();
+    const artifactBlob = new Blob([artifactBytes], { type: mediaType });
+    releaseReportArtifact();
+    reportViewerState.objectUrl = URL.createObjectURL(artifactBlob);
+
+    const frame = document.querySelector("#report-artifact-frame");
+    frame.src = reportViewerState.objectUrl;
+    frame.hidden = false;
+
+    const download = document.querySelector("#download-report-artifact");
+    download.href = reportViewerState.objectUrl;
+    download.download = filename;
+    download.hidden = false;
+
+    const open = document.querySelector("#open-report-artifact");
+    open.href = reportViewerState.objectUrl;
+    open.hidden = false;
+
+    document.querySelector("#viewer-report-model-id").textContent = response.headers.get("X-Report-Model-ID") || "";
+    document.querySelector("#viewer-artifact-id").textContent = response.headers.get("X-Report-Artifact-ID") || "";
+    document.querySelector("#viewer-content-sha").textContent = response.headers.get("X-Content-SHA256") || "";
+    document.querySelector("#report-artifact-identities").hidden = false;
+    statusNode.textContent = "已载入冻结报告制品；预览与下载使用同一组原始响应字节。";
+  } catch (error) {
+    statusNode.textContent = error instanceof Error ? error.message : "报告制品不可用。";
+  } finally {
+    document.querySelector("#load-report").disabled = false;
+  }
+}
+
+document.querySelector("#report-request-form").addEventListener("submit", loadReportArtifact);
+window.addEventListener("beforeunload", releaseReportArtifact);

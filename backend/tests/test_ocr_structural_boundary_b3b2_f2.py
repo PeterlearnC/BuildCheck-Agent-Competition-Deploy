@@ -544,5 +544,5 @@ def test_f2_versions_change_semantic_run_but_not_raw_execution() -> None:
     )
     assert current.ocr_run_id != draft_f2.ocr_run_id
     assert current.execution_id == draft_f2.execution_id
-    assert OCR_QUALITY_GATE_VERSION == "v0.4-b.3c.2-f1-r1-quality"
-    assert OCR_CORPUS_SEMANTICS_VERSION == "v0.4-b.3c.3-s1-r1-ocr-corpus"
+    assert OCR_QUALITY_GATE_VERSION == "v0.4-b.3b-q1-r1-quality"
+    assert OCR_CORPUS_SEMANTICS_VERSION == "v0.4-b.3b-q1-r1-ocr-corpus"

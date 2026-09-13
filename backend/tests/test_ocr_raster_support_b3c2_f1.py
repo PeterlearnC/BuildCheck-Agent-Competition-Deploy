@@ -390,8 +390,8 @@ def test_raster_semantics_change_run_identity_but_not_raw_execution_identity() -
     derived_evidence_changed = _run(changed_lines, png_bytes)
 
     assert OCR_ADAPTER_VERSION == "v0.4-b.3b.1b-adapter"
-    assert OCR_QUALITY_GATE_VERSION == "v0.4-b.3c.2-f1-r1-quality"
-    assert OCR_CORPUS_SEMANTICS_VERSION == "v0.4-b.3c.3-s1-r1-ocr-corpus"
+    assert OCR_QUALITY_GATE_VERSION == "v0.4-b.3b-q1-r1-quality"
+    assert OCR_CORPUS_SEMANTICS_VERSION == "v0.4-b.3b-q1-r1-ocr-corpus"
     assert current.ocr_run_id != legacy.ocr_run_id
     assert current.execution_id == legacy.execution_id
     assert current.execution_id == derived_evidence_changed.execution_id

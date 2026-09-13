@@ -1,0 +1,43 @@
+{
+  "schema_version": "ocr-qualification-manifest-v1",
+  "official_source_checksum": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
+  "ocr_run_id": "ocr_d801d55a7e4bb98a02d769fd53d108017df36d39207b9b5649d6116cf565a869",
+  "ocr_execution_id": "execution_f40b89f458a9a5e32b81b717617f1f353bddd3ee6af210aab70dea9aa938f4c4",
+  "execution_artifact_sha256": "d5feb7242ce99c5600a9fcdbcc7bae70bdbccd59ae9dc008e5e752da97ccb0e0",
+  "raw_ocr_result_artifact_sha256": "74fd8ba3eb0f46b6e71ff75b2339ff8f043d725968923c0582c49d94480ce798",
+  "quality_assessment_artifact_sha256": "7ac9860ffc1bb7d7b7e9d4b8edb3fe5fa8602df5846082bc04cd70db67f1423e",
+  "accepted_boundary_artifact_sha256": "97618b2ce17ef726aba825f2705e1e5ce37ef725036a055b41e6d6fb9508435b",
+  "qualified_parse_result_artifact_sha256": "2b53980c75987710afd949466460010a622c6141881ee95c1d5fb7756e20e442",
+  "provider": {
+    "provider": "rapidocr",
+    "provider_version": "3.9.2",
+    "runtime": "onnxruntime",
+    "runtime_version": "1.29.0",
+    "device": "CPUExecutionProvider",
+    "detector": {
+      "model_id": "PP-OCRv6_det_small.onnx",
+      "sha256": "090f04abcd9d9a7498bc4ebf677e4cb9bdce1fe4197ddb7e529f1ef44e1ff94f"
+    },
+    "recognizer": {
+      "model_id": "PP-OCRv6_rec_small.onnx",
+      "sha256": "6f327246b50388f3c176ae304bd95767ea6dc0c9ae92153ef8cbe210b3c14884"
+    },
+    "classifier": {
+      "model_id": "ch_ppocr_mobile_v2.0_cls_mobile.onnx",
+      "sha256": "e47acedf663230f8863ff1ab0e64dd2d82b838fceb5957146dab185a89d6215c"
+    },
+    "classification_enabled": false
+  },
+  "render_config": {
+    "renderer": "PyMuPDF",
+    "renderer_version": "1.26.3",
+    "dpi": 300,
+    "colorspace": "GRAY",
+    "alpha": false,
+    "config_version": "v0.4-b.3b.1b-render"
+  },
+  "quality_gate_version": "v0.4-b.3b-q1-r1-quality",
+  "ocr_corpus_semantics_version": "v0.4-b.3b-q1-r1-ocr-corpus",
+  "qualification_status": "QUALIFIED",
+  "qualification_reason": "Complete controlled OCR execution, raw evidence, current quality boundary, and current structural parse chain independently verified; 62 articles are current fail-closed truth."
+}

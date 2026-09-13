@@ -18,6 +18,13 @@ from app.services.ocr.run_identity import OCR_QUALITY_GATE_VERSION, validate_ocr
 
 
 class OCRQualityGate:
+    # Provider confidence is a probability-like [0, 1] signal, not a semantic
+    # decision.  Values below REVIEW_THRESHOLD are rejected outright; values
+    # below ACCEPT_THRESHOLD require review.  Neither class may enter the
+    # normative parser channel.  The two boundaries intentionally distinguish
+    # unusable recognition from auditable review-required recognition.
+    CONFIDENCE_REJECT_THRESHOLD = 0.50
+    CONFIDENCE_ACCEPT_THRESHOLD = 0.80
     ARTICLE = re.compile(r"^\d+\.\d+\.\d+(?:\.\d+)?(?:-\d+)?(?:\s|$)")
     ARTICLE_LIKE = re.compile(r"^\d+(?:\.\d+){2,4}(?:\s|$)")
     FUSED_ARTICLE_LIKE = re.compile(r"^(?P<major>\d+)\.(?P<tail>\d{2,})(?:\s|$)")
@@ -144,6 +151,8 @@ class OCRQualityGate:
             OCRIssueCode.ARTICLE_NUMBER_AMBIGUITY,
             OCRIssueCode.STRUCTURAL_SEQUENCE_GAP,
             OCRIssueCode.READING_ORDER_ANOMALY,
+            OCRIssueCode.CONFIDENCE_REJECTED,
+            OCRIssueCode.CONFIDENCE_REVIEW_REQUIRED,
         }
         for page in pages:
             for issue in page.issues:
@@ -253,6 +262,34 @@ class OCRQualityGate:
             if (match := self.ARTICLE.match(line.raw_text.strip()))
         }
         for line in page.lines:
+            if line.confidence < self.CONFIDENCE_REJECT_THRESHOLD:
+                issues.append(
+                    OCRQualityIssue(
+                        code=OCRIssueCode.CONFIDENCE_REJECTED,
+                        reason=(
+                            "OCR line confidence is below the deterministic "
+                            "rejection boundary "
+                            f"({line.confidence:.6f} < "
+                            f"{self.CONFIDENCE_REJECT_THRESHOLD:.6f})."
+                        ),
+                        affected_line_ids=[line.line_id],
+                        affected_polygons=[line.polygon],
+                    )
+                )
+            elif line.confidence < self.CONFIDENCE_ACCEPT_THRESHOLD:
+                issues.append(
+                    OCRQualityIssue(
+                        code=OCRIssueCode.CONFIDENCE_REVIEW_REQUIRED,
+                        reason=(
+                            "OCR line confidence requires human review before "
+                            "normative parser entry "
+                            f"({line.confidence:.6f} < "
+                            f"{self.CONFIDENCE_ACCEPT_THRESHOLD:.6f})."
+                        ),
+                        affected_line_ids=[line.line_id],
+                        affected_polygons=[line.polygon],
+                    )
+                )
             height = self._height(line.polygon)
             width = self._width(line.polygon)
             angle = abs(self._top_edge_angle(line.polygon))

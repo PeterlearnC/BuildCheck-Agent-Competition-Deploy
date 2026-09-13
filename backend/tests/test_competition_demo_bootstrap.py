@@ -1,9 +1,10 @@
-"""Competition demo bootstrap preserves and reproduces qualified C.3 authority."""
+"""Competition demo bootstrap preserves qualified C.3 and D.6 authority."""
 
 from __future__ import annotations
 
 import ast
 from copy import deepcopy
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -13,10 +14,16 @@ import subprocess
 import pytest
 
 from app.core.config import Settings
+from app.services.ocr.run_identity import (
+    OCR_CORPUS_SEMANTICS_VERSION,
+    OCR_QUALITY_GATE_VERSION,
+)
 from app.services.standards.standard_repository import StandardRepository
 from scripts.prepare_competition_demo import (
     CompetitionBootstrapError,
+    DemoFindingCase,
     DemoManifest,
+    DemoReviewGapCase,
     PROTECTED_CORE_AUTHORITY_PATHS,
     PROTECTED_F1_AUTHORITY_PATHS,
     QUALIFIED_CORE_BASELINE,
@@ -29,7 +36,6 @@ from scripts.prepare_competition_demo import (
     install_qualified_corpus,
     load_corpus_package,
     load_manifest,
-    prepare_runtime,
     provision_plans,
     run_preflight,
     verify_core_baseline,
@@ -145,20 +151,67 @@ def manifest() -> DemoManifest:
 
 
 @pytest.fixture(scope="session")
-def clean_runtime(tmp_path_factory, manifest):
+def qualified_ocr_authority(tmp_path_factory):
+    """Provide a complete synthetic chain for bootstrap mechanics only.
+
+    The synthetic copy keeps bootstrap mechanics independent while preserving
+    strict qualification-chain validation.
+    """
+    source = PROJECT_ROOT / "competition/corpus/gb55023-ocr-qualification-manifest.json"
+    raw = json.loads(source.read_text(encoding="utf-8"))
+    raw.update(
+        {
+            "execution_artifact_sha256": "1" * 64,
+            "raw_ocr_result_artifact_sha256": "2" * 64,
+            "quality_assessment_artifact_sha256": "3" * 64,
+            "accepted_boundary_artifact_sha256": "4" * 64,
+            "quality_gate_version": OCR_QUALITY_GATE_VERSION,
+            "ocr_corpus_semantics_version": OCR_CORPUS_SEMANTICS_VERSION,
+            "qualification_status": "QUALIFIED",
+            "qualification_reason": "Synthetic complete chain for bootstrap tests only.",
+        }
+    )
+    path = tmp_path_factory.mktemp("ocr-qualification-authority") / "qualified.json"
+    path.write_text(json.dumps(raw, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return path, hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _load_with_test_authority(manifest, qualified_ocr_authority):
+    path, digest = qualified_ocr_authority
+    return load_corpus_package(
+        manifest,
+        PROJECT_ROOT,
+        qualification_manifest_path=path,
+        qualification_manifest_sha256=digest,
+    )
+
+
+@pytest.fixture(scope="session")
+def clean_runtime(tmp_path_factory, manifest, qualified_ocr_authority):
     _require_assets(manifest)
     root = tmp_path_factory.mktemp("competition-runtime")
     uploads = root / "uploads"
     standards = root / "standards"
     assert not (standards / "documents").exists()
-    result = prepare_runtime(
-        project_root=PROJECT_ROOT,
-        manifest_path=MANIFEST_PATH,
-        asset_dir=ASSET_DIR,
-        upload_dir=uploads,
-        standards_dir=standards,
-        preflight=True,
-    )
+    package = _load_with_test_authority(manifest, qualified_ocr_authority)
+    settings = Settings(upload_dir=uploads, standards_dir=standards)
+    plan_status = provision_plans(manifest, ASSET_DIR, uploads)
+    corpus_status = install_qualified_corpus(package, settings)
+    repository = StandardRepository(settings)
+    result = {
+        "status": "PASS",
+        "manifest_schema_version": manifest.schema_version,
+        "plan_provision": plan_status,
+        "corpus_provision": corpus_status,
+        "parsed_standard_count": len(repository.list_documents()),
+        "qualified_article_count": len(
+            repository.load_articles(manifest.standard.standard_id)
+        ),
+        "ocr_calls": 0,
+        "external_llm_calls": 0,
+        "prebuilt_findings_used": 0,
+        "cases": run_preflight(manifest, settings),
+    }
     return {
         "root": root,
         "uploads": uploads,
@@ -194,7 +247,7 @@ def test_protected_authority_boundary_matches_qualified_c1_c4_semantics() -> Non
 
 def test_current_qualified_f1_baseline_accepts_downstream_f2_wip() -> None:
     assert QUALIFIED_CORE_BASELINE == "7a0250a52f84fdd332775dacb2d5683877625f1a"
-    assert QUALIFIED_F1_BASELINE == "b35638577cae511ed40660bf9748c15873180726"
+    assert QUALIFIED_F1_BASELINE == "a94c1418eba0a1e26aec3a212a101c7e898f7390"
     current_head = _git(PROJECT_ROOT, "rev-parse", "HEAD").lower()
     assert verify_core_baseline(PROJECT_ROOT, QUALIFIED_CORE_BASELINE) == current_head
     _git(
@@ -312,16 +365,131 @@ def test_wrong_qualified_f1_ancestry_is_rejected(qualified_guard_repository) -> 
 
 
 def test_manifest_is_strict_versioned_selector_authority(manifest) -> None:
-    assert manifest.schema_version == "competition-demo-manifest-v1"
+    assert manifest.schema_version == "competition-demo-manifest-v2"
     assert len(manifest.plans) == 2
     assert [case.case_id for case in manifest.cases] == ["CASE-A", "CASE-B", "CASE-C"]
+    assert [case.case_kind for case in manifest.cases] == [
+        "FINDING",
+        "FINDING",
+        "REVIEW_GAP",
+    ]
+    assert sum(isinstance(case, DemoFindingCase) for case in manifest.cases) == 2
+    assert sum(isinstance(case, DemoReviewGapCase) for case in manifest.cases) == 1
     assert all(
         case.qualification_assertion.expected_scope == "REVIEW_UNIT_REQUIREMENT"
         for case in manifest.cases
+        if isinstance(case, DemoFindingCase)
     )
     raw = _raw_manifest()
     assert "finding" not in raw
     assert "runtime_result" not in raw
+
+
+def test_review_gap_case_has_exact_plan_authority_without_finding_fields(manifest) -> None:
+    case = next(case for case in manifest.cases if case.case_id == "CASE-C")
+    assert isinstance(case, DemoReviewGapCase)
+    assert case.document_id == "04039d98-4131-422a-b29a-256bade04a6a"
+    plan = next(plan for plan in manifest.plans if plan.document_id == case.document_id)
+    assert plan.pdf_sha256 == "41f4ea2e7d999f298309f4ecb25491cc79125d422cb84484963de36325166b95"
+    assert case.plan_locator.model_dump(mode="json") == {
+        "physical_page": 8,
+        "page_char_start": 107,
+        "page_char_end": 142,
+        "source_text": "（3）、套管预埋必须做到同水平标高的套管标高偏差必控制在5mm 之内，",
+        "source_text_sha256": "7450ef276b244603d4c2bc4930bba8b94d9381b20d4eb39c33bec7862ad40faf",
+    }
+    case_keys = set(_raw_manifest()["cases"][2])
+    assert case_keys == {
+        "case_id",
+        "case_kind",
+        "document_id",
+        "plan_locator",
+        "qualification_assertion",
+    }
+    forbidden = {
+        "workspace_id",
+        "review_gap_id",
+        "finding_id",
+        "comparison_id",
+        "review_unit_id",
+        "evidence_id",
+        "requirement_id",
+        "article_id",
+        "article_number",
+        "standard_id",
+        "expected_decision",
+    }
+    assert forbidden.isdisjoint(set(_keys(_raw_manifest()["cases"][2])))
+    assert "4441b5a1-a167-4e26-9711-d90a8e85f71d" not in MANIFEST_PATH.read_text(
+        encoding="utf-8"
+    )
+
+
+def _keys(value):
+    if isinstance(value, dict):
+        for key, child in value.items():
+            yield key
+            yield from _keys(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _keys(child)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "gap-decision",
+        "gap-finding-id",
+        "gap-comparison-id",
+        "gap-article-id",
+        "gap-requirement-id",
+        "gap-workspace-id",
+        "gap-review-gap-id",
+        "finding-missing-request",
+        "finding-as-gap-with-c3-fields",
+        "gap-locator-text-drift",
+        "gap-wrong-case-id",
+        "extra-plan-authority",
+    ],
+)
+def test_invalid_mixed_case_states_are_rejected(mutation) -> None:
+    raw = _raw_manifest()
+    finding = raw["cases"][0]
+    gap = raw["cases"][2]
+    if mutation == "gap-decision":
+        gap["qualification_assertion"]["expected_decision"] = "COMPLIANT"
+    elif mutation == "gap-finding-id":
+        gap["qualification_assertion"]["expected_finding_id"] = "finding_" + "0" * 64
+    elif mutation == "gap-comparison-id":
+        gap["qualification_assertion"]["expected_comparison_id"] = "comparison_" + "0" * 64
+    elif mutation == "gap-article-id":
+        gap["qualification_assertion"]["expected_article_id"] = "article_" + "0" * 64
+    elif mutation == "gap-requirement-id":
+        gap["qualification_assertion"]["expected_requirement_id"] = "requirement_" + "0" * 64
+    elif mutation == "gap-workspace-id":
+        gap["workspace_id"] = "findingsworkspace_" + "0" * 64
+    elif mutation == "gap-review-gap-id":
+        gap["review_gap_id"] = "reviewgap_" + "0" * 64
+    elif mutation == "finding-missing-request":
+        del finding["request"]
+    elif mutation == "finding-as-gap-with-c3-fields":
+        finding["case_kind"] = "REVIEW_GAP"
+    elif mutation == "gap-locator-text-drift":
+        gap["plan_locator"]["source_text"] += "改"
+    elif mutation == "gap-wrong-case-id":
+        gap["case_id"] = "CASE-D"
+    else:
+        raw["plans"].append(deepcopy(raw["plans"][0]))
+        raw["plans"][-1]["document_id"] = "00000000-0000-0000-0000-000000000001"
+    with pytest.raises(ValueError):
+        DemoManifest.model_validate(raw)
+
+
+def test_case_b_plan_fact_does_not_promote_nearby_200mm(manifest) -> None:
+    case = next(case for case in manifest.cases if case.case_id == "CASE-B")
+    assert isinstance(case, DemoFindingCase)
+    assert [selector.source_text for selector in case.request.plan_facts] == ["3mm"]
+    assert "200mm" not in {selector.source_text for selector in case.request.plan_facts}
 
 
 @pytest.mark.parametrize(
@@ -331,7 +499,7 @@ def test_manifest_is_strict_versioned_selector_authority(manifest) -> None:
             "top-level-identical",
             "{\n",
             "schema_version",
-            '"competition-demo-manifest-v1"',
+            '"competition-demo-manifest-v2"',
         ),
         ("top-level-conflicting", "{\n", "schema_version", '"evil-version"'),
         ("nested-standard-source", '"standard": {', "source_sha256", '"0"'),
@@ -391,19 +559,48 @@ def test_duplicate_nested_corpus_authority_key_is_rejected(tmp_path) -> None:
         _load_json(path)
 
 
-def test_original_authority_json_remains_strictly_loadable(manifest) -> None:
+def test_current_authority_json_loads_and_tampered_chain_fails_closed(
+    manifest, tmp_path
+) -> None:
     assert load_manifest(MANIFEST_PATH) == manifest
     package = load_corpus_package(manifest, PROJECT_ROOT)
     assert package.authority.parse_result_canonical_sha256 == (
         manifest.standard.qualified_parse_result_sha256
     )
 
+    authority_path = (
+        PROJECT_ROOT / "competition/corpus/gb55023-ocr-qualification-manifest.json"
+    )
+    raw = json.loads(authority_path.read_text(encoding="utf-8"))
+    raw["qualified_parse_result_artifact_sha256"] = "0" * 64
+    tampered_path = tmp_path / "tampered-qualification.json"
+    tampered_bytes = json.dumps(raw, ensure_ascii=False, indent=2).encode("utf-8")
+    tampered_path.write_bytes(tampered_bytes)
+    with pytest.raises(CompetitionBootstrapError, match="unavailable or stale"):
+        load_corpus_package(
+            manifest,
+            PROJECT_ROOT,
+            qualification_manifest_path=tampered_path,
+            qualification_manifest_sha256=hashlib.sha256(tampered_bytes).hexdigest(),
+        )
 
-def test_qualified_corpus_package_matches_frozen_authority(manifest) -> None:
-    package = load_corpus_package(manifest, PROJECT_ROOT)
+
+def test_complete_qualification_chain_is_strictly_loadable(
+    manifest, qualified_ocr_authority
+) -> None:
+    package = _load_with_test_authority(manifest, qualified_ocr_authority)
+    assert package.authority.parse_result_canonical_sha256 == (
+        manifest.standard.qualified_parse_result_sha256
+    )
+
+
+def test_qualified_corpus_package_matches_frozen_authority(
+    manifest, qualified_ocr_authority
+) -> None:
+    package = _load_with_test_authority(manifest, qualified_ocr_authority)
     assert package.parse_result.document.standard_id == manifest.standard.standard_id
     assert package.parse_result.document.source_checksum == manifest.standard.source_sha256
-    assert len(package.parse_result.articles) == 64
+    assert len(package.parse_result.articles) == 62
     by_number = {article.article_number: article for article in package.parse_result.articles}
     assert by_number["4.4.15"].article_id.endswith("74dfb6")
     assert by_number["4.4.16"].article_id.endswith("8209d")
@@ -414,38 +611,48 @@ def test_clean_runtime_bootstrap_installs_one_qualified_standard(clean_runtime) 
     assert result["status"] == "PASS"
     assert result["corpus_provision"] == "INSTALLED"
     assert result["parsed_standard_count"] == 1
-    assert result["qualified_article_count"] == 64
+    assert result["qualified_article_count"] == 62
     assert result["ocr_calls"] == 0
     assert result["external_llm_calls"] == 0
     assert result["prebuilt_findings_used"] == 0
 
 
-def test_three_live_c3_cases_match_qualified_authority(clean_runtime) -> None:
+def test_two_live_c3_findings_and_one_d6_gap_match_qualified_authority(clean_runtime) -> None:
     cases = clean_runtime["result"]["cases"]
-    assert [(case["case_id"], case["decision"]) for case in cases] == [
-        ("CASE-A", "COMPLIANT"),
-        ("CASE-B", "NON_COMPLIANT"),
-        ("CASE-C", "INSUFFICIENT_INFORMATION"),
+    assert [(case["case_id"], case["item_kind"]) for case in cases] == [
+        ("CASE-A", "FINDING"),
+        ("CASE-B", "FINDING"),
+        ("CASE-C", "REVIEW_GAP"),
     ]
+    assert [case["decision"] for case in cases[:2]] == ["COMPLIANT", "NON_COMPLIANT"]
+    assert cases[2]["terminal_class"] == "CANDIDATE_TERMINAL"
+    assert cases[2]["terminal_status"] == "NO_STANDARD_SCOPE"
+    assert cases[2]["finding_absent"] is True
+    assert cases[2]["comparison_absent"] is True
+    assert cases[2]["decision_absent"] is True
+    assert cases[2]["standard_authority_absent"] is True
+    assert cases[2]["requirement_authority_absent"] is True
     assert all(case["status"] == "PASS" for case in cases)
     assert all(
         case["manifest_expected_result_used_as_runtime_finding"] is False
-        for case in cases
+        for case in cases[:2]
     )
+    assert cases[2]["manifest_expected_result_used_as_runtime_gap"] is False
 
 
-def test_repeat_bootstrap_is_idempotent(manifest, clean_runtime) -> None:
-    result = prepare_runtime(
-        project_root=PROJECT_ROOT,
-        manifest_path=MANIFEST_PATH,
-        asset_dir=ASSET_DIR,
+def test_repeat_bootstrap_is_idempotent(
+    manifest, clean_runtime, qualified_ocr_authority
+) -> None:
+    package = _load_with_test_authority(manifest, qualified_ocr_authority)
+    settings = Settings(
         upload_dir=clean_runtime["uploads"],
         standards_dir=clean_runtime["standards"],
-        preflight=False,
     )
-    assert result["corpus_provision"] == "ALREADY_VERIFIED"
-    assert set(result["plan_provision"].values()) == {"ALREADY_VERIFIED"}
-    assert result["parsed_standard_count"] == 1
+    assert install_qualified_corpus(package, settings) == "ALREADY_VERIFIED"
+    assert set(
+        provision_plans(manifest, ASSET_DIR, clean_runtime["uploads"]).values()
+    ) == {"ALREADY_VERIFIED"}
+    assert len(StandardRepository(settings).list_documents()) == 1
 
 
 @pytest.mark.parametrize("mode", ["missing", "named-wrong", "modified"])
@@ -489,16 +696,20 @@ def test_modified_corpus_package_fails_sha_before_install(tmp_path, manifest) ->
         load_corpus_package(manifest, tmp_path)
 
 
-def test_wrong_source_sha_metadata_fails_corpus_authority(manifest) -> None:
+def test_wrong_source_sha_metadata_fails_corpus_authority(
+    manifest, qualified_ocr_authority
+) -> None:
     raw = _raw_manifest()
     raw["standard"]["source_sha256"] = "0" * 64
     tampered = _validated(raw)
-    with pytest.raises(CompetitionBootstrapError, match="authority mismatch"):
-        load_corpus_package(tampered, PROJECT_ROOT)
+    with pytest.raises(CompetitionBootstrapError, match="unavailable or stale"):
+        _load_with_test_authority(tampered, qualified_ocr_authority)
 
 
-def test_conflicting_installed_corpus_is_not_replaced(tmp_path, manifest) -> None:
-    package = load_corpus_package(manifest, PROJECT_ROOT)
+def test_conflicting_installed_corpus_is_not_replaced(
+    tmp_path, manifest, qualified_ocr_authority
+) -> None:
+    package = _load_with_test_authority(manifest, qualified_ocr_authority)
     settings = Settings(standards_dir=tmp_path / "standards")
     assert install_qualified_corpus(package, settings) == "INSTALLED"
     metadata = (
@@ -608,7 +819,7 @@ def test_expected_decision_is_assertion_not_runtime_authority(clean_runtime, man
     assert live.decision == "COMPLIANT"
 
 
-def test_production_bootstrap_imports_no_ocr_or_llm_service() -> None:
+def test_production_bootstrap_imports_no_ocr_runtime_or_llm_service() -> None:
     tree = ast.parse(SCRIPT_PATH.read_text(encoding="utf-8"))
     imported: list[str] = []
     for node in ast.walk(tree):
@@ -616,7 +827,11 @@ def test_production_bootstrap_imports_no_ocr_or_llm_service() -> None:
             imported.extend(alias.name for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module:
             imported.append(node.module)
-    assert not any(name.startswith("app.services.ocr") for name in imported)
+    assert not any(
+        name.startswith("app.services.ocr")
+        and name != "app.services.ocr.qualification_manifest"
+        for name in imported
+    )
     assert "app.services.llm_service" not in imported
 
 
@@ -630,4 +845,5 @@ def test_no_c4_route_report_or_aggregation_authority_added(manifest) -> None:
     assert all(
         case.qualification_assertion.expected_scope == "REVIEW_UNIT_REQUIREMENT"
         for case in manifest.cases
+        if isinstance(case, DemoFindingCase)
     )

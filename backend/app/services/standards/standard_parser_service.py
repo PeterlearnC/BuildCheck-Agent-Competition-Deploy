@@ -11,7 +11,10 @@ from app.schemas.standards import (
     MetadataConfidence,
     StandardIdentityStatus,
 )
-from app.schemas.ocr import SourceKind
+from app.schemas.ocr import (
+    OfficialSourceBinding,
+    SourceKind,
+)
 from app.schemas.structural import ValidatedStructuralEvidence
 from app.services.standards.article_merge_service import ArticleMergeService
 from app.services.standards.document_region_service import DocumentRegionService
@@ -25,16 +28,22 @@ from app.services.standards.stable_identity_service import (
     PARSER_SEMANTICS_VERSION,
     PARSER_VERSION,
 )
+from app.services.ocr.trusted_source_registry import TrustedOfficialSourceRegistry
 
 
 class StandardParserService:
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        *,
+        trusted_sources: TrustedOfficialSourceRegistry | None = None,
+    ) -> None:
         self.preprocessing = StandardTextPreprocessingService()
         self.metadata = StandardMetadataService()
         self.chapters = StandardChapterService()
         self.articles = ArticleMergeService()
         self.regions = DocumentRegionService()
         self.inspector = DocumentInspectorService()
+        self.trusted_sources = trusted_sources or TrustedOfficialSourceRegistry()
 
     def parse(
         self,
@@ -66,11 +75,28 @@ class StandardParserService:
             )
         processed = self.preprocessing.preprocess(pages)
         metadata = self.metadata.extract(processed)
-        binding = document.official_source_binding
+        binding = self.trusted_sources.resolve(
+            source_checksum=document.source_checksum,
+            requested=document.official_source_binding,
+        )
         binding_is_valid = (
             binding is not None
-            and binding.confirmed
             and binding.source_checksum.lower() == document.source_checksum.lower()
+        )
+        resolved_binding = (
+            OfficialSourceBinding(
+                source_checksum=binding.source_checksum,
+                canonical_standard_code=binding.canonical_standard_code,
+                display_standard_code=binding.display_standard_code,
+                standard_name=binding.standard_name,
+                binding_reason="Resolved from trusted checksum-indexed authority.",
+                binding_provenance=(
+                    f"{binding.authority_id}: {binding.authority_provenance}"
+                ),
+                confirmed=True,
+            )
+            if binding_is_valid
+            else None
         )
         segmentation = self.regions.segment(processed)
         if structural_evidence is None:
@@ -144,10 +170,11 @@ class StandardParserService:
                     else metadata.identity_confidence
                 ),
                 "identity_reason": (
-                    f"Curated official-source binding: {binding.binding_reason}"
+                    f"Trusted official-source authority: {binding.authority_id}"
                     if binding_is_valid
                     else metadata.identity_reason
                 ),
+                "official_source_binding": resolved_binding,
                 "edition": metadata.edition,
                 "publish_date": metadata.publish_date,
                 "effective_date": metadata.effective_date,

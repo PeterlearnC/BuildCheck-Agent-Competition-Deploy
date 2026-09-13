@@ -1,12 +1,11 @@
-"""Typed presentation contracts for the competition demonstration UI.
+"""Typed presentation contracts for the qualified competition demo.
 
-These contracts project live C.3 authority for presentation. They do not
-create document-level compliance authority or accept caller-supplied review
-inputs.
+Successful responses are a strict union of live C.3 Findings and live D.6
+ReviewGaps.  The transport layer does not create either machine authority.
 """
 
 from decimal import Decimal
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -16,6 +15,8 @@ from app.schemas.compliance_comparison import (
     ComparisonReasonCode,
     MissingInformationItem,
 )
+from app.schemas.findings_workspace import ReviewGapSource
+from app.schemas.whole_plan_review import WholePlanCandidateTerminalState
 
 
 class _FrozenPresentationModel(BaseModel):
@@ -37,14 +38,30 @@ class CompetitionPlanSummary(_FrozenPresentationModel):
     case_count: int = Field(ge=0)
 
 
-class CompetitionCaseSummary(_FrozenPresentationModel):
+class CompetitionFindingCaseSummary(_FrozenPresentationModel):
     case_id: str
+    item_kind: Literal["FINDING"] = "FINDING"
     label: str
     description: str
     document_id: str
     page_number: int = Field(ge=1)
     standard_code: str
     article_number: str
+
+
+class CompetitionReviewGapCaseSummary(_FrozenPresentationModel):
+    case_id: str
+    item_kind: Literal["REVIEW_GAP"] = "REVIEW_GAP"
+    label: str
+    description: str
+    document_id: str
+    page_number: int = Field(ge=1)
+
+
+CompetitionCaseSummary = Annotated[
+    CompetitionFindingCaseSummary | CompetitionReviewGapCaseSummary,
+    Field(discriminator="item_kind"),
+]
 
 
 class CompetitionDemoMetadata(_FrozenPresentationModel):
@@ -108,10 +125,11 @@ class CompetitionTechnicalProvenance(_FrozenPresentationModel):
     decision_scope: ComparisonDecisionScope
 
 
-class CompetitionCaseRunResult(_FrozenPresentationModel):
+class CompetitionFindingCaseRunResult(_FrozenPresentationModel):
     status: Literal["SUCCESS"] = "SUCCESS"
     message: str
     case_id: str
+    item_kind: Literal["FINDING"] = "FINDING"
     finding_id: str
     decision: ComparisonDecision
     decision_label: str
@@ -124,3 +142,53 @@ class CompetitionCaseRunResult(_FrozenPresentationModel):
     plan_evidence: CompetitionPlanEvidence
     standard_evidence: CompetitionStandardEvidence
     technical_provenance: CompetitionTechnicalProvenance
+
+
+class CompetitionReviewGapPlanEvidence(_FrozenPresentationModel):
+    document_display_name: str
+    document_id: str
+    pdf_sha256: str
+    physical_page: int = Field(ge=1)
+    page_char_start: int = Field(ge=0)
+    page_char_end: int = Field(gt=0)
+    exact_text: str
+    text_sha256: str
+    candidate_id: str
+
+
+class CompetitionReviewGapTechnicalProvenance(_FrozenPresentationModel):
+    workspace_id: str
+    whole_plan_review_id: str
+    review_gap_id: str
+    document_id: str
+    document_sha256: str
+    candidate_trace_id: str
+    candidate_id: str
+    identity_version: str
+    projection_version: str
+
+
+class CompetitionReviewGapCaseRunResult(_FrozenPresentationModel):
+    status: Literal["SUCCESS"] = "SUCCESS"
+    message: str
+    case_id: str
+    item_kind: Literal["REVIEW_GAP"] = "REVIEW_GAP"
+    review_gap_id: str
+    terminal_class: Literal[ReviewGapSource.CANDIDATE_TERMINAL]
+    terminal_status: Literal[WholePlanCandidateTerminalState.NO_STANDARD_SCOPE]
+    local_explanation: str
+    scope_notice: str
+    finding_absent: Literal[True] = True
+    comparison_absent: Literal[True] = True
+    decision_absent: Literal[True] = True
+    standard_authority_absent: Literal[True] = True
+    article_authority_absent: Literal[True] = True
+    requirement_authority_absent: Literal[True] = True
+    plan_evidence: CompetitionReviewGapPlanEvidence
+    technical_provenance: CompetitionReviewGapTechnicalProvenance
+
+
+CompetitionCaseRunResult = Annotated[
+    CompetitionFindingCaseRunResult | CompetitionReviewGapCaseRunResult,
+    Field(discriminator="item_kind"),
+]

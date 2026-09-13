@@ -1,14 +1,14 @@
 {
   "schema_version": "competition-deployment-authority-v1",
   "qualified_source": {
-    "head": "ed7f8e6662cd0c270c7e37116bcd64081d3859f7",
-    "subject": "feat(competition): add reviewed demo UI",
+    "head": "7dad44ca7b4dbf131d76853d1ee40494af9405d7",
+    "subject": "fix(competition): bind three-case pack F1 checkpoint",
     "archive_method": "git -c core.autocrlf=false archive",
-    "tracked_file_count": 196,
-    "raw_git_blob_matches": 196,
+    "tracked_file_count": 238,
+    "raw_git_blob_matches": 238,
     "raw_git_blob_mismatches": 0
   },
-  "deployment_packaging_timestamp_utc": "2026-08-30T11:21:44Z",
+  "deployment_packaging_timestamp_utc": "2026-09-11T14:28:12Z",
   "plan_assets": [
     {
       "path": "backend/data/uploads/f42886ef-83ec-454c-86e2-34d5c238ca0f.pdf",
@@ -16,31 +16,31 @@
       "sha256": "5f3ebde3bd2c0a6d6dccb516c3029fd336558e198ebeccad07d29ca0d03fd8dc"
     },
     {
-      "path": "backend/data/uploads/4441b5a1-a167-4e26-9711-d90a8e85f71d.pdf",
-      "size": 4354179,
-      "sha256": "b0f8c55d2f02b9c826dd1c8001a56582b470bd80ec5d5ad8368235dcb0058462"
+      "path": "backend/data/uploads/04039d98-4131-422a-b29a-256bade04a6a.pdf",
+      "size": 564678,
+      "sha256": "41f4ea2e7d999f298309f4ecb25491cc79125d422cb84484963de36325166b95"
     }
   ],
   "corpus_authority": {
     "path": "competition/corpus/gb55023-qualified-parse-result.json",
-    "sha256": "9f8d0e9fa1bd257e5b0fb7a27465242a1b02c0a46cc366d3dd2016908cad596c",
-    "canonical_parse_result_sha256": "52dce521d4b46db820ccfac9cdcc61bd83b78f3b808144eb5e29a1550114a717"
+    "sha256": "4a240614213ff5652dae5f7a5a07063b9848df1e54ccd42830320745947f6fd7",
+    "canonical_parse_result_sha256": "2b53980c75987710afd949466460010a622c6141881ee95c1d5fb7756e20e442"
   },
   "installed_standard": {
     "standard_id": "55023b3b-1b00-4000-8000-000000000001",
     "standard_code": "GB 55023-2022",
     "official_source_sha256": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
-    "article_count": 64,
+    "article_count": 62,
     "canonical_package_match": true,
     "source_pdf_required": false,
     "runtime_files": [
       {
         "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/metadata.json",
-        "sha256": "3df0302ee5d10d0e3139c66644cae3ad792925c62a7b96025c43a93a86018728"
+        "sha256": "595f59fa6100fed58ae638a848cdf6feb26a4d4cb95fe4235ec7a44c2b7321c0"
       },
       {
         "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/pages.json",
-        "sha256": "be6943f69dc63091ded790d516064aad66f5e92600b36b7d07a9dff026e9761a"
+        "sha256": "bc6ea11b3563fc4edea986a95bdca0dc3e2456c18ef1394c2b13181abacd918f"
       },
       {
         "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/chapters.json",
@@ -48,22 +48,22 @@
       },
       {
         "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/articles.json",
-        "sha256": "473f1e8806cf30a5fa5de7e6c562a15b780ae29291c79db6b8abcf4c4b71e8d6"
+        "sha256": "756530a2c2fbd75b5950150e472597858e3facf39523334581061a6ba82e6c9b"
       }
     ]
   },
   "competition_ui": [
     {
       "path": "backend/app/static/competition/index.html",
-      "sha256": "a5fc281c4d6944c83d4d8a9c4542fffcef798d2edc64404103bd96f2728bbcd4"
+      "sha256": "8e856e6787864d213ed3c55a31e4c9dabace7c8f73d8115c68abfe1fe99e9e30"
     },
     {
       "path": "backend/app/static/competition/app.js",
-      "sha256": "0615c4eeb8e0fc38c86c5037814ef8f259e11eeb7428353ba905bcd5bdbe7428"
+      "sha256": "4c4e893bfa0c2207e451f23d534669f3e0eb5f585a9f7700de67591240590abe"
     },
     {
       "path": "backend/app/static/competition/styles.css",
-      "sha256": "e7a3353da756513c9143ddec6716b937c8f7b874e31d11b68bd19461d67f13e9"
+      "sha256": "1e8fb517fefdf1b7694625fc1a81b0d47edf6b6605ed442ef5c9eb0f4f77fa39"
     }
   ],
   "deployment_only_material": {
@@ -91,20 +91,31 @@
     "plan_count": 2,
     "case_count": 3,
     "case_a": {
+      "item_kind": "FINDING",
       "decision": "COMPLIANT",
       "finding_id": "finding_993e8847b86de084c9d1942a9771bf3dab07200260499f7d38d00292060e818b"
     },
     "case_b": {
+      "item_kind": "FINDING",
       "decision": "NON_COMPLIANT",
-      "finding_id": "finding_530869523a03ddacf658e167fcff74f5b32b68f324533711a0b38538298f0c73"
+      "finding_id": "finding_530869523a03ddacf658e167fcff74f5b32b68f324533711a0b38538298f0c73",
+      "plan_value": "3 mm",
+      "normative_value": "2.5 mm",
+      "nearby_200_mm_authority": 0
     },
     "case_c": {
-      "decision": "INSUFFICIENT_INFORMATION",
-      "finding_id": "finding_9c02ed3517c6826c4d1228f31140a0761183ade0e33000d70c9f6127f0faa408"
+      "item_kind": "REVIEW_GAP",
+      "terminal_class": "CANDIDATE_TERMINAL",
+      "terminal_status": "NO_STANDARD_SCOPE",
+      "finding": "ABSENT",
+      "comparison": "ABSENT",
+      "decision": "ABSENT",
+      "standard_article_requirement": "ABSENT"
     },
     "qualified_provenance_match": true,
     "blocked_route_tests_passed": true,
     "ocr_calls": 0,
+    "network_calls": 0,
     "external_llm_calls": 0
   }
 }

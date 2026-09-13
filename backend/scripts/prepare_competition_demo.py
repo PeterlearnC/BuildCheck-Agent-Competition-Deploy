@@ -1,7 +1,7 @@
 """Provision and preflight the three qualified competition demo cases.
 
 This module packages existing authority only.  It does not parse standards,
-run OCR/LLMs, decide compliance, or manufacture ReviewFinding responses.
+run OCR/LLMs, decide compliance, or manufacture Findings or ReviewGaps.
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ import re
 import shutil
 import subprocess
 import sys
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -34,12 +34,19 @@ from app.schemas.compliance_comparison import (  # noqa: E402
     ComplianceComparisonRequest,
     SourceSpanSelector,
 )
+from app.schemas.findings_workspace import (  # noqa: E402
+    FindingsWorkspaceResult,
+    ReviewGapSource,
+    ReviewGapWorkspaceItem,
+    WorkspaceItemKind,
+)
 from app.schemas.standards import (  # noqa: E402
     StandardArticle,
     StandardChapter,
     StandardDocument,
     StandardPage,
 )
+from app.schemas.whole_plan_review import WholePlanCandidateTerminalState  # noqa: E402
 from app.services.retrieval.standards_search_service import (  # noqa: E402
     StandardsSearchService,
 )
@@ -48,6 +55,9 @@ from app.services.review.compliance_comparison_service import (  # noqa: E402
 )
 from app.services.review.compliance_review_service import (  # noqa: E402
     ComplianceReviewService,
+)
+from app.services.review.findings_workspace_service import (  # noqa: E402
+    FindingsWorkspaceService,
 )
 from app.services.review.plan_fact_service import PlanFactService  # noqa: E402
 from app.services.review.requirement_service import RequirementService  # noqa: E402
@@ -60,10 +70,20 @@ from app.services.standards.standard_registry_service import (  # noqa: E402
     StandardRegistryService,
 )
 from app.services.standards.standard_repository import StandardRepository  # noqa: E402
+from app.services.ocr.qualification_manifest import (  # noqa: E402
+    OCRQualificationManifestError,
+    load_qualification_manifest,
+)
 
 
-MANIFEST_SCHEMA_VERSION = "competition-demo-manifest-v1"
+MANIFEST_SCHEMA_VERSION = "competition-demo-manifest-v2"
 CORPUS_SCHEMA_VERSION = "qualified-parsed-corpus-v1"
+OCR_QUALIFICATION_MANIFEST_PATH = (
+    "competition/corpus/gb55023-ocr-qualification-manifest.json"
+)
+OCR_QUALIFICATION_MANIFEST_SHA256 = (
+    "04855b2758bb11234c7d6f9499dafda132c637f0d08fad7cd26ce77396c44df3"
+)
 SHA256_PATTERN = r"^[0-9a-f]{64}$"
 DOCUMENT_ID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 FORBIDDEN_AUTHORITY_KEYS = {
@@ -81,7 +101,7 @@ FORBIDDEN_AUTHORITY_KEYS = {
     "coverage_percentage",
 }
 QUALIFIED_CORE_BASELINE = "7a0250a52f84fdd332775dacb2d5683877625f1a"
-QUALIFIED_F1_BASELINE = "b35638577cae511ed40660bf9748c15873180726"
+QUALIFIED_F1_BASELINE = "a94c1418eba0a1e26aec3a212a101c7e898f7390"
 
 # This set is derived from the production semantic files introduced or modified
 # by the qualified C.1, C.2, C.3, and C.4 commits.  Composition entry points
@@ -182,7 +202,7 @@ class DemoComparisonRequest(BaseModel):
     plan_facts: list[ExactSelector]
 
 
-class QualificationAssertion(BaseModel):
+class FindingQualificationAssertion(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     expected_decision: ComparisonDecision
@@ -197,15 +217,16 @@ class QualificationAssertion(BaseModel):
     expected_article_id: str = Field(pattern=r"^article_[0-9a-f]{64}$")
 
 
-class DemoCase(BaseModel):
+class DemoFindingCase(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     case_id: str = Field(pattern=r"^CASE-[A-Z0-9-]+$")
+    case_kind: Literal[WorkspaceItemKind.FINDING]
     document_id: str = Field(pattern=DOCUMENT_ID_PATTERN)
     standard_id: str = Field(min_length=1)
     article_number: str = Field(min_length=1)
     request: DemoComparisonRequest
-    qualification_assertion: QualificationAssertion
+    qualification_assertion: FindingQualificationAssertion
 
     @model_validator(mode="after")
     def request_scope_is_exact(self):
@@ -214,6 +235,57 @@ class DemoCase(BaseModel):
         if self.request.evidence_id != self.qualification_assertion.expected_evidence_id:
             raise ValueError("Case evidence selector differs from qualification authority.")
         return self
+
+
+class ReviewGapPlanLocator(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    physical_page: int = Field(gt=0)
+    page_char_start: int = Field(ge=0)
+    page_char_end: int = Field(gt=0)
+    source_text: str = Field(min_length=1)
+    source_text_sha256: str = Field(pattern=SHA256_PATTERN)
+
+    @model_validator(mode="after")
+    def exact_source_is_self_consistent(self):
+        if self.page_char_end != self.page_char_start + len(self.source_text):
+            raise ValueError("Review-gap locator span does not match exact source text.")
+        expected = hashlib.sha256(self.source_text.encode("utf-8")).hexdigest()
+        if self.source_text_sha256 != expected:
+            raise ValueError("Review-gap locator hash does not match exact source text.")
+        return self
+
+
+class ReviewGapQualificationAssertion(BaseModel):
+    """Qualification expectations only; never inputs to D.6 projection."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    expected_item_kind: Literal[WorkspaceItemKind.REVIEW_GAP]
+    expected_terminal_class: Literal[ReviewGapSource.CANDIDATE_TERMINAL]
+    expected_terminal_status: Literal[WholePlanCandidateTerminalState.NO_STANDARD_SCOPE]
+    expected_finding_absent: Literal[True]
+    expected_comparison_absent: Literal[True]
+    expected_decision_absent: Literal[True]
+    expected_standard_authority_absent: Literal[True]
+    expected_article_authority_absent: Literal[True]
+    expected_requirement_authority_absent: Literal[True]
+
+
+class DemoReviewGapCase(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    case_id: str = Field(pattern=r"^CASE-[A-Z0-9-]+$")
+    case_kind: Literal[WorkspaceItemKind.REVIEW_GAP]
+    document_id: str = Field(pattern=DOCUMENT_ID_PATTERN)
+    plan_locator: ReviewGapPlanLocator
+    qualification_assertion: ReviewGapQualificationAssertion
+
+
+DemoCase = Annotated[
+    DemoFindingCase | DemoReviewGapCase,
+    Field(discriminator="case_kind"),
+]
 
 
 class DemoManifest(BaseModel):
@@ -233,14 +305,31 @@ class DemoManifest(BaseModel):
             raise ValueError("Manifest contains duplicate document_id values.")
         if len(case_ids) != len(set(case_ids)):
             raise ValueError("Manifest contains duplicate case_id values.")
+        if len(self.plans) != 2:
+            raise ValueError("Competition manifest must contain exactly two plan authorities.")
         if len(self.cases) != 3:
             raise ValueError("Competition manifest must contain exactly three qualified cases.")
         known_plans = set(plan_ids)
         for case in self.cases:
             if case.document_id not in known_plans:
                 raise ValueError("Case references an unknown plan document.")
-            if case.standard_id != self.standard.standard_id:
+            if (
+                isinstance(case, DemoFindingCase)
+                and case.standard_id != self.standard.standard_id
+            ):
                 raise ValueError("Case references an unknown standard authority.")
+        if sum(isinstance(case, DemoFindingCase) for case in self.cases) != 2:
+            raise ValueError("Competition manifest must contain exactly two Finding cases.")
+        if sum(isinstance(case, DemoReviewGapCase) for case in self.cases) != 1:
+            raise ValueError("Competition manifest must contain exactly one ReviewGap case.")
+        cases_by_id = {case.case_id: case for case in self.cases}
+        if set(cases_by_id) != {"CASE-A", "CASE-B", "CASE-C"}:
+            raise ValueError("Competition manifest must retain the three fixed case identities.")
+        if not all(
+            isinstance(cases_by_id[case_id], DemoFindingCase)
+            for case_id in ("CASE-A", "CASE-B")
+        ) or not isinstance(cases_by_id["CASE-C"], DemoReviewGapCase):
+            raise ValueError("Competition case identities have incompatible machine paths.")
         return self
 
 
@@ -449,7 +538,11 @@ def verify_core_baseline(project_root: Path, expected_head: str) -> str:
 
 
 def load_corpus_package(
-    manifest: DemoManifest, project_root: Path
+    manifest: DemoManifest,
+    project_root: Path,
+    *,
+    qualification_manifest_path: Path | None = None,
+    qualification_manifest_sha256: str = OCR_QUALIFICATION_MANIFEST_SHA256,
 ) -> QualifiedCorpusPackage:
     package_path = (project_root / manifest.standard.corpus_package_path).resolve()
     try:
@@ -463,8 +556,23 @@ def load_corpus_package(
 
     raw = _load_json(package_path)
     parse_result = raw.get("parse_result") if isinstance(raw, dict) else None
-    if canonical_sha256(parse_result) != manifest.standard.qualified_parse_result_sha256:
+    parse_result_sha256 = canonical_sha256(parse_result)
+    if parse_result_sha256 != manifest.standard.qualified_parse_result_sha256:
         raise CompetitionBootstrapError("Qualified parsed-corpus identity mismatch.")
+    qualification_path = qualification_manifest_path or (
+        project_root / OCR_QUALIFICATION_MANIFEST_PATH
+    )
+    try:
+        load_qualification_manifest(
+            qualification_path,
+            expected_file_sha256=qualification_manifest_sha256,
+            expected_source_checksum=manifest.standard.source_sha256,
+            expected_parse_result_sha256=parse_result_sha256,
+        )
+    except OCRQualificationManifestError as exc:
+        raise CompetitionBootstrapError(
+            "OCR corpus qualification authority is unavailable or stale."
+        ) from exc
     try:
         package = QualifiedCorpusPackage.model_validate(raw)
     except ValueError as exc:
@@ -620,7 +728,7 @@ def provision_plans(
     return results
 
 
-def build_comparison_request(case: DemoCase) -> ComplianceComparisonRequest:
+def build_comparison_request(case: DemoFindingCase) -> ComplianceComparisonRequest:
     request = case.request
     return ComplianceComparisonRequest(
         page_number=request.page_number,
@@ -659,7 +767,7 @@ def _finding_service(settings: Settings) -> ReviewFindingService:
     )
 
 
-def _assert_live_finding(case: DemoCase, finding) -> None:
+def _assert_live_finding(case: DemoFindingCase, finding) -> None:
     expected = case.qualification_assertion
     actual = {
         "decision": finding.decision,
@@ -694,20 +802,121 @@ def _assert_live_finding(case: DemoCase, finding) -> None:
         )
 
 
+def select_qualified_review_gap(
+    case: DemoReviewGapCase,
+    plan: PlanAuthority,
+    workspace: FindingsWorkspaceResult,
+) -> ReviewGapWorkspaceItem:
+    """Locate by qualified plan source, then validate the natural D.6 result."""
+
+    if (
+        workspace.document_id != case.document_id
+        or workspace.document_sha256 != plan.pdf_sha256
+    ):
+        raise CompetitionBootstrapError(
+            f"{case.case_id} D.6 workspace document authority mismatch."
+        )
+
+    locator = case.plan_locator
+    matches = [
+        item
+        for item in workspace.items
+        if item.plan_source.document_id == case.document_id
+        and item.plan_source.document_sha256 == plan.pdf_sha256
+        and item.plan_source.physical_page == locator.physical_page
+        and item.plan_source.page_char_start == locator.page_char_start
+        and item.plan_source.page_char_end == locator.page_char_end
+        and item.plan_source.source_text == locator.source_text
+        and item.plan_source.source_text_sha256 == locator.source_text_sha256
+    ]
+    if len(matches) != 1:
+        raise CompetitionBootstrapError(
+            f"{case.case_id} qualified plan locator matched {len(matches)} workspace items."
+        )
+
+    item = matches[0]
+    if not isinstance(item, ReviewGapWorkspaceItem):
+        raise CompetitionBootstrapError(
+            f"{case.case_id} qualified plan locator did not produce a D.6 ReviewGap."
+        )
+
+    expected = case.qualification_assertion
+    if (
+        item.item_kind != expected.expected_item_kind
+        or item.gap_source != expected.expected_terminal_class
+        or item.candidate_terminal_state != expected.expected_terminal_status
+    ):
+        raise CompetitionBootstrapError(
+            f"{case.case_id} live D.6 terminal authority mismatch."
+        )
+    if any(
+        value is not None
+        for value in (
+            item.requirement_trace_id,
+            item.requirement_id,
+            item.unresolved_span_id,
+            item.requirement_terminal_state,
+            item.decomposition_status,
+            item.unresolved_reason,
+            item.standard_source,
+            getattr(item, "finding_id", None),
+            getattr(item, "comparison_id", None),
+            getattr(item, "decision", None),
+        )
+    ):
+        raise CompetitionBootstrapError(
+            f"{case.case_id} candidate-terminal ReviewGap has contradictory authority."
+        )
+    return item
+
+
 def run_preflight(manifest: DemoManifest, settings: Settings) -> list[dict[str, Any]]:
-    service = _finding_service(settings)
+    finding_service = _finding_service(settings)
+    workspace_service = FindingsWorkspaceService(settings=settings)
     plan_by_id = {plan.document_id: plan for plan in manifest.plans}
     reports: list[dict[str, Any]] = []
     for case in manifest.cases:
+        plan = plan_by_id[case.document_id]
+        if isinstance(case, DemoReviewGapCase):
+            try:
+                workspace = workspace_service.build_workspace(case.document_id)
+            except Exception as exc:
+                raise CompetitionBootstrapError(
+                    f"{case.case_id} live D.6 reconstruction failed closed."
+                ) from exc
+            gap = select_qualified_review_gap(case, plan, workspace)
+            reports.append(
+                {
+                    "case_id": case.case_id,
+                    "status": "PASS",
+                    "item_kind": gap.item_kind.value,
+                    "document_id": gap.document_id,
+                    "document_sha256": gap.document_sha256,
+                    "workspace_id": workspace.workspace_id,
+                    "review_gap_id": gap.review_gap_id,
+                    "terminal_class": gap.gap_source.value,
+                    "terminal_status": gap.candidate_terminal_state.value,
+                    "plan_source": gap.plan_source.model_dump(mode="json"),
+                    "finding_absent": getattr(gap, "finding_id", None) is None,
+                    "comparison_absent": getattr(gap, "comparison_id", None) is None,
+                    "decision_absent": getattr(gap, "decision", None) is None,
+                    "standard_authority_absent": gap.standard_source is None,
+                    "requirement_authority_absent": gap.requirement_id is None,
+                    "manifest_expected_result_used_as_runtime_gap": False,
+                }
+            )
+            continue
+
         try:
-            response = service.create(case.document_id, build_comparison_request(case))
+            response = finding_service.create(
+                case.document_id, build_comparison_request(case)
+            )
         except Exception as exc:
             raise CompetitionBootstrapError(
                 f"{case.case_id} live C.3 reconstruction failed closed."
             ) from exc
         finding = response.finding
         _assert_live_finding(case, finding)
-        plan = plan_by_id[case.document_id]
         if finding.document_sha256 != plan.pdf_sha256:
             raise CompetitionBootstrapError(
                 f"{case.case_id} Finding PDF SHA differs from plan authority."
@@ -720,6 +929,7 @@ def run_preflight(manifest: DemoManifest, settings: Settings) -> list[dict[str, 
             {
                 "case_id": case.case_id,
                 "status": "PASS",
+                "item_kind": WorkspaceItemKind.FINDING.value,
                 "document_id": finding.document_id,
                 "document_sha256": finding.document_sha256,
                 "standard_id": finding.standard_citation.standard_id,
@@ -746,10 +956,17 @@ def prepare_runtime(
     upload_dir: Path,
     standards_dir: Path,
     preflight: bool,
+    qualification_manifest_path: Path | None = None,
+    qualification_manifest_sha256: str = OCR_QUALIFICATION_MANIFEST_SHA256,
 ) -> dict[str, Any]:
     manifest = load_manifest(manifest_path)
     verified_head = verify_core_baseline(project_root, manifest.qualified_core_baseline)
-    package = load_corpus_package(manifest, project_root)
+    package = load_corpus_package(
+        manifest,
+        project_root,
+        qualification_manifest_path=qualification_manifest_path,
+        qualification_manifest_sha256=qualification_manifest_sha256,
+    )
     settings = Settings(upload_dir=upload_dir, standards_dir=standards_dir)
     plan_status = provision_plans(manifest, asset_dir, upload_dir)
     corpus_status = install_qualified_corpus(package, settings)
@@ -801,7 +1018,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--preflight",
         action="store_true",
-        help="Run all three live production C.3 reconstructions after provisioning.",
+        help="Run the live production C.3/D.6 reconstructions after provisioning.",
     )
     return parser
 

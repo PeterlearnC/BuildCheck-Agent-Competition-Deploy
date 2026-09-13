@@ -93,9 +93,9 @@ def _raw_page() -> OCRPageResult:
 def test_s1_semantic_versions_are_frozen_without_unrelated_bumps() -> None:
     assert STRUCTURAL_RESOLVER_VERSION == "v0.4-b.3c.3-s1-r1-structural"
     assert PARSER_SEMANTICS_VERSION == "v0.4-b.3c.3-s1-r1-parser"
-    assert OCR_CORPUS_SEMANTICS_VERSION == "v0.4-b.3c.3-s1-r1-ocr-corpus"
+    assert OCR_CORPUS_SEMANTICS_VERSION == "v0.4-b.3b-q1-r1-ocr-corpus"
     assert OCR_ADAPTER_VERSION == "v0.4-b.3b.1b-adapter"
-    assert OCR_QUALITY_GATE_VERSION == "v0.4-b.3c.2-f1-r1-quality"
+    assert OCR_QUALITY_GATE_VERSION == "v0.4-b.3b-q1-r1-quality"
     assert OCR_RASTER_SUPPORT_RULE_VERSION == "v0.4-b.3c.2-f1-r1-raster-support"
     assert RETRIEVAL_VERSION == "v0.4-b.3a.1"
     assert MANIFEST_VERSION == "v0.4-b.3a.1-manifest"

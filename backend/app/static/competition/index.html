@@ -26,15 +26,15 @@
     <main>
       <section class="hero" aria-labelledby="hero-title">
         <div>
-          <p class="section-kicker">真实方案 · 规范原文 · 确定性比较</p>
-          <h2 id="hero-title">让每一项局部判断，都能回到原始证据。</h2>
+          <p class="section-kicker">真实方案 · 机器审查 · 权威可追溯</p>
+          <h2 id="hero-title">让每个局部 Finding 与明确 Review Gap，都能回到原始证据。</h2>
           <p id="sample-mode-notice" class="hero-copy">
             当前演示使用已验证的真实施工方案与已资格化规范证据，系统实时重建局部审查结果。
           </p>
         </div>
         <aside class="architecture-flow" aria-label="运行权威链路">
-          <span>方案片段</span><b aria-hidden="true">→</b><span>规范证据</span>
-          <b aria-hidden="true">→</b><span>确定性比较</span><b aria-hidden="true">→</b><span>局部 Finding</span>
+          <span>方案审查目标</span><b aria-hidden="true">→</b><span>服务器机器权威</span>
+          <b aria-hidden="true">→</b><span>Finding / Review Gap</span>
         </aside>
       </section>
 
@@ -42,7 +42,7 @@
         <div class="safety-icon" aria-hidden="true">i</div>
         <div>
           <h2 id="safety-title">局部范围声明</h2>
-          <p id="scope-notice">本结果仅针对当前方案片段与单项规范要求的局部比较，不代表整份方案总体合规状态。</p>
+          <p id="scope-notice">本演示仅呈现固定局部机器结果，不代表整份方案总体合规状态或完整审查覆盖。</p>
         </div>
       </section>
 
@@ -81,7 +81,7 @@
             <p class="section-kicker">LOCAL REVIEW TARGETS</p>
             <h2 id="cases-title">局部审查目标</h2>
           </div>
-          <p>运行前仅展示中性目标信息；结果来自实时 C.3 重建。</p>
+          <p>运行前仅展示固定目标信息；结果来自实时 C.3 Finding 或 D.6 Review Gap 权威路径。</p>
         </div>
         <div id="case-grid" class="case-grid" aria-live="polite"></div>
       </section>
@@ -89,12 +89,61 @@
       <section id="result-section" class="result-section" aria-labelledby="result-title" hidden>
         <div class="section-heading">
           <div>
-            <p class="section-kicker">SOURCE-GROUNDED FINDING</p>
+            <p class="section-kicker">SOURCE-GROUNDED MACHINE RESULT</p>
             <h2 id="result-title">局部审查结果</h2>
           </div>
           <p id="result-message" role="status" aria-live="polite"></p>
         </div>
         <div id="result-content"></div>
+      </section>
+
+      <section id="report-viewer" class="report-viewer" aria-labelledby="report-viewer-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">QUALIFIED REPORT ARTIFACT</p>
+            <h2 id="report-viewer-title">语义审查报告查看器</h2>
+          </div>
+          <p>报告内容由冻结的 P3-B 接口生成；本页面仅显示和下载原始制品字节。</p>
+        </div>
+
+        <form id="report-request-form" class="report-request-form">
+          <label>
+            <span>Document ID</span>
+            <input id="report-document-id" name="document_id" required autocomplete="off">
+          </label>
+          <label>
+            <span>Artifact format</span>
+            <select id="report-format" name="format">
+              <option value="HTML">HTML</option>
+              <option value="JSON">JSON</option>
+            </select>
+          </label>
+          <label class="report-commands-field">
+            <span>Typed human-review commands (JSON array)</span>
+            <textarea id="report-commands" name="commands" rows="4" spellcheck="false">[]</textarea>
+          </label>
+          <button id="load-report" class="run-button" type="submit">生成并查看报告制品</button>
+        </form>
+
+        <p id="report-viewer-status" class="report-viewer-status" role="status" aria-live="polite">
+          输入已存储方案的 Document ID，以查看冻结语义报告。
+        </p>
+        <dl id="report-artifact-identities" class="report-artifact-identities" hidden>
+          <dt>Report model ID</dt><dd id="viewer-report-model-id"></dd>
+          <dt>Artifact ID</dt><dd id="viewer-artifact-id"></dd>
+          <dt>Content SHA-256</dt><dd id="viewer-content-sha"></dd>
+        </dl>
+        <div class="report-artifact-actions">
+          <a id="download-report-artifact" class="secondary-button" href="#" hidden>下载原始报告制品</a>
+          <a id="open-report-artifact" class="secondary-button" href="#" target="_blank" rel="noopener" hidden>新窗口查看</a>
+        </div>
+        <iframe
+          id="report-artifact-frame"
+          class="report-artifact-frame"
+          title="冻结报告制品预览"
+          sandbox
+          hidden
+        ></iframe>
       </section>
 
     </main>
