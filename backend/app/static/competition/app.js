@@ -1,6 +1,7 @@
 "use strict";
 
 const API_ROOT = "/api/v1/competition/demo";
+const CONSISTENCY_CASE_D_API = "/api/v1/competition/demo/cases/CASE-D/run";
 const REPORT_API_PATH = (documentId) =>
   `/api/v1/documents/${encodeURIComponent(documentId)}/review/report`;
 const DECISION_LABELS = Object.freeze({
@@ -431,6 +432,84 @@ async function loadMetadata() {
 
 document.querySelector("#refresh-status").addEventListener("click", loadMetadata);
 loadMetadata();
+
+function renderConsistencyResult(result) {
+  const container = document.querySelector("#consistency-result");
+  container.hidden = false;
+  container.replaceChildren();
+
+  const header = element("div", "consistency-result-header");
+  header.append(
+    element("div", "synthetic-badge", result.display_label),
+    element("h3", "", "跨章节一致性候选"),
+    element("p", "consistency-result-code", result.classification),
+    element("p", "consistency-result-code", result.purpose),
+  );
+  container.append(header);
+
+  result.candidates.forEach((candidate) => {
+    const card = element("article", "consistency-candidate-card");
+    const summary = element("dl", "consistency-summary");
+    [
+      ["对象", candidate.object_display_name],
+      ["参数", candidate.parameter_display_name],
+      ["状态", candidate.review_status === "NEEDS_HUMAN_REVIEW" ? "待人工复核" : candidate.review_status],
+    ].forEach(([label, value]) => {
+      summary.append(element("dt", "", label), element("dd", "", value));
+    });
+
+    const values = element("div", "consistency-value-grid");
+    candidate.value_groups.forEach((group) => {
+      const valueCard = element("section", "consistency-value-card");
+      valueCard.append(element("h4", "consistency-value", `${group.value} ${group.unit}`));
+      group.sources.forEach((source) => {
+        const evidence = element("div", "consistency-source");
+        evidence.append(
+          element("strong", "consistency-page", `第 ${source.physical_page} 页`),
+          element("blockquote", "consistency-source-text", source.source_text),
+        );
+        valueCard.append(evidence);
+      });
+      values.append(valueCard);
+    });
+    card.append(summary, values);
+    container.append(card);
+  });
+}
+
+function renderConsistencyFailure(detail) {
+  const container = document.querySelector("#consistency-result");
+  container.hidden = false;
+  const panel = element("article", "consistency-safe-failure");
+  panel.append(
+    element("h3", "", "一致性检查已安全停止"),
+    element("p", "", detail),
+  );
+  container.replaceChildren(panel);
+}
+
+async function runConsistencyCaseD(event) {
+  const button = event.currentTarget;
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "正在检查…";
+  try {
+    const response = await fetch(CONSISTENCY_CASE_D_API, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || "一致性检查服务不可用。");
+    renderConsistencyResult(payload);
+  } catch (error) {
+    renderConsistencyFailure(error instanceof Error ? error.message : "一致性检查服务不可用。");
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
+document.querySelector("#run-consistency-case-d").addEventListener("click", runConsistencyCaseD);
 
 const reportViewerState = { objectUrl: null };
 

@@ -4,6 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from starlette.concurrency import run_in_threadpool
 
 from app.schemas.competition_demo import CompetitionCaseRunResult, CompetitionDemoMetadata
+from app.schemas.competition_internal_consistency import (
+    CompetitionInternalConsistencyResponse,
+)
 from app.services.competition_demo_service import (
     CompetitionDemoAuthorityDriftError,
     CompetitionDemoCaseNotFoundError,
@@ -12,6 +15,13 @@ from app.services.competition_demo_service import (
     CompetitionDemoNotReadyError,
     CompetitionDemoService,
     get_competition_demo_service,
+)
+from app.services.competition_internal_consistency_service import (
+    CompetitionInternalConsistencyAuthorityError,
+    CompetitionInternalConsistencyDemoService,
+    CompetitionInternalConsistencyExecutionError,
+    CompetitionInternalConsistencyInternalError,
+    get_competition_internal_consistency_service,
 )
 
 
@@ -23,6 +33,40 @@ def get_demo_metadata(
     service: CompetitionDemoService = Depends(get_competition_demo_service),
 ) -> CompetitionDemoMetadata:
     return service.metadata()
+
+
+@router.post(
+    "/cases/CASE-D/run",
+    response_model=CompetitionInternalConsistencyResponse,
+)
+async def run_internal_consistency_case_d(
+    request: Request,
+    service: CompetitionInternalConsistencyDemoService = Depends(
+        get_competition_internal_consistency_service
+    ),
+) -> CompetitionInternalConsistencyResponse:
+    if request.query_params or await request.body():
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="该固定演示接口不接受请求体或权威覆盖字段。",
+        )
+    try:
+        return await run_in_threadpool(service.run_case_d)
+    except CompetitionInternalConsistencyAuthorityError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="系统已安全停止，本次未生成一致性检查结果。请检查受控演示资产。",
+        ) from exc
+    except CompetitionInternalConsistencyExecutionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="系统已安全停止，本次未生成一致性检查结果。文档证据重建不可用。",
+        ) from exc
+    except CompetitionInternalConsistencyInternalError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="系统已安全停止，本次未生成一致性检查结果。",
+        ) from exc
 
 
 @router.post("/cases/{case_id}/run", response_model=CompetitionCaseRunResult)

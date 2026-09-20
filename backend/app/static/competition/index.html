@@ -86,6 +86,29 @@
         <div id="case-grid" class="case-grid" aria-live="polite"></div>
       </section>
 
+      <section id="consistency-section" class="consistency-section" aria-labelledby="consistency-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">INTERNAL CONSISTENCY REVIEW</p>
+            <h2 id="consistency-title">跨章节方案内部一致性检查</h2>
+          </div>
+          <span class="synthetic-badge">受控合成演示案例</span>
+        </div>
+        <article class="consistency-demo-card">
+          <div>
+            <p class="case-id">CASE-D</p>
+            <h3>同一参数跨页显式数值复核</h3>
+            <p class="case-description">用于演示同一对象、同一参数在不同页面出现不同显式数值时的候选发现。</p>
+          </div>
+          <button id="run-consistency-case-d" class="consistency-run-button" type="button">运行一致性检查</button>
+        </article>
+        <div id="consistency-result" class="consistency-result" aria-live="polite" hidden></div>
+        <p class="consistency-disclaimer">
+          该候选仅表示在当前检查覆盖范围内发现不同显式值，需由专业人员结合上下文复核；
+          不构成规范不合规、风险或工程缺陷结论。
+        </p>
+      </section>
+
       <section id="result-section" class="result-section" aria-labelledby="result-title" hidden>
         <div class="section-heading">
           <div>

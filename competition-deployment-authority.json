@@ -1,137 +1,279 @@
 {
-  "schema_version": "competition-deployment-authority-v1",
-  "qualified_source": {
-    "head": "7dad44ca7b4dbf131d76853d1ee40494af9405d7",
-    "subject": "fix(competition): bind three-case pack F1 checkpoint",
-    "archive_method": "git -c core.autocrlf=false archive",
-    "tracked_file_count": 238,
-    "raw_git_blob_matches": 237,
-    "raw_git_blob_mismatches": 0,
-    "approved_deployment_overrides": [
-      {
-        "path": "README.md",
-        "source_blob_sha256": "7143358daf77ed6b6b8ac546b01b89ed900ceb77f51ca6f7bb7b087b03c5595d",
-        "deployment_sha256": "63d8ed933a34c783b4623a80234f1b51b00c96022304cd1061939b4cb6e3ce50",
-        "approval_phase": "Competition-D8-B-R2",
-        "semantic_authority": false
-      }
-    ]
-  },
-  "deployment_packaging_timestamp_utc": "2026-09-13T10:39:30Z",
-  "plan_assets": [
-    {
-      "path": "backend/data/uploads/f42886ef-83ec-454c-86e2-34d5c238ca0f.pdf",
-      "size": 15357238,
-      "sha256": "5f3ebde3bd2c0a6d6dccb516c3029fd336558e198ebeccad07d29ca0d03fd8dc"
-    },
-    {
-      "path": "backend/data/uploads/04039d98-4131-422a-b29a-256bade04a6a.pdf",
-      "size": 564678,
-      "sha256": "41f4ea2e7d999f298309f4ecb25491cc79125d422cb84484963de36325166b95"
-    }
-  ],
-  "corpus_authority": {
-    "path": "competition/corpus/gb55023-qualified-parse-result.json",
-    "sha256": "4a240614213ff5652dae5f7a5a07063b9848df1e54ccd42830320745947f6fd7",
-    "canonical_parse_result_sha256": "2b53980c75987710afd949466460010a622c6141881ee95c1d5fb7756e20e442"
-  },
-  "installed_standard": {
-    "standard_id": "55023b3b-1b00-4000-8000-000000000001",
-    "standard_code": "GB 55023-2022",
-    "official_source_sha256": "58414579d5d6b70f24c0380d632ce659985043b3bb1121dbdbd026452942d567",
-    "article_count": 62,
-    "canonical_package_match": true,
-    "source_pdf_required": false,
-    "runtime_files": [
-      {
-        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/metadata.json",
-        "sha256": "595f59fa6100fed58ae638a848cdf6feb26a4d4cb95fe4235ec7a44c2b7321c0"
-      },
-      {
-        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/pages.json",
-        "sha256": "bc6ea11b3563fc4edea986a95bdca0dc3e2456c18ef1394c2b13181abacd918f"
-      },
-      {
-        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/chapters.json",
-        "sha256": "bbf0a9322067cd8d62c49061ca5b35b08d8f88a77b5419508104797136c0c6a1"
-      },
-      {
-        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/articles.json",
-        "sha256": "756530a2c2fbd75b5950150e472597858e3facf39523334581061a6ba82e6c9b"
-      }
+  "acceptance_contract": {
+    "abc_preserved": true,
+    "case_a": "FINDING / COMPLIANT",
+    "case_b": "FINDING / NON_COMPLIANT",
+    "case_c": "REVIEW_GAP / NO_STANDARD_SCOPE",
+    "case_d": "INTERNAL_CONSISTENCY_CANDIDATE / NEEDS_HUMAN_REVIEW",
+    "case_d_ocr_calls": 0,
+    "external_llm_calls": 0,
+    "network_calls": 0,
+    "normative_manifest_case_count": 3,
+    "normative_manifest_cases": [
+      "CASE-A",
+      "CASE-B",
+      "CASE-C"
     ]
   },
   "competition_ui": [
     {
       "path": "backend/app/static/competition/index.html",
-      "sha256": "8e856e6787864d213ed3c55a31e4c9dabace7c8f73d8115c68abfe1fe99e9e30"
+      "sha256": "2000029ee4d13f188e651e2644d42da100c0fe0ff3f44e417df136c8fde6ac8e",
+      "size": 8039
     },
     {
       "path": "backend/app/static/competition/app.js",
-      "sha256": "4c4e893bfa0c2207e451f23d534669f3e0eb5f585a9f7700de67591240590abe"
+      "sha256": "ab73912fb6b93d8bd43591eeb9d158186bc674ddf0f12bdca713c1fe13334399",
+      "size": 24445
     },
     {
       "path": "backend/app/static/competition/styles.css",
-      "sha256": "1e8fb517fefdf1b7694625fc1a81b0d47edf6b6605ed442ef5c9eb0f4f77fa39"
+      "sha256": "91607a15eb5fd5ed37d04d1279abe7fd1ac0680556197a088503067b3186171a",
+      "size": 18324
     }
   ],
-  "deployment_only_material": {
-    "classification": "DEPLOYMENT-ONLY MATERIAL",
-    "semantic_authority": false,
-    "wrapper": {
-      "path": "backend/competition_public_entry.py",
-      "sha256": "9c9bfc54f0ed4bba054f50062e98508003c85bfdeb2d58b72b77bdbd583a2385"
+  "d9": {
+    "case_d": {
+      "case_id": "CASE-D",
+      "classification": "CONTROLLED_SYNTHETIC",
+      "compliance_authority": false,
+      "display_label": "受控合成演示案例",
+      "document_id": "a38da41d-3bb1-5cbb-8402-8d76545dfca9",
+      "expected_review_status": "NEEDS_HUMAN_REVIEW",
+      "finding_authority": false,
+      "pdf_path": "backend/tests/fixtures/internal_consistency/case_d/a38da41d-3bb1-5cbb-8402-8d76545dfca9.pdf",
+      "pdf_sha256": "732c04c8d0ad282292ba0529af04bc0777c83e67d6a2c99cb606b7883d6764e9",
+      "purpose": "INTERNAL_CONSISTENCY_DEMONSTRATION",
+      "severity_risk_authority": false
     },
-    "dockerfile": {
-      "path": "Dockerfile",
-      "sha256": "65f6fb6e1299bb3b41433ea95a85d8f6f2c5caace192930d9fde02eadd50db1d"
-    },
-    "dockerignore": {
-      "path": ".dockerignore",
-      "sha256": "494cc8625044fff5a7d6ee8453f45fd9b23a6020e9d59512785bb5320ecf76da"
-    },
-    "readme": {
-      "path": "README.md",
-      "sha256": "63d8ed933a34c783b4623a80234f1b51b00c96022304cd1061939b4cb6e3ce50",
-      "classification": "HUMAN-APPROVED DEPLOYMENT DOCUMENTATION",
-      "semantic_authority": false,
-      "parent_machine_checkpoint": "50ab4161bc31cbf7f411e5f7757b13995188fed5"
-    }
+    "delta_path_count": 14,
+    "p1_commit": "23eb0316723d0aa104846d51f08ed31d1f924118",
+    "p2_commit": "c7b60f708bfd3e81d29958fc73a60d45e27652c2",
+    "p3_commit": "9b2575b26c1654730eebb05a4596f025218629f6",
+    "paths": [
+      {
+        "change": "M",
+        "path": "backend/app/api/routes/competition.py",
+        "sha256": "034952dbf3d9a72bb7691e0cfb7fe1ac7e8ae1e92e2edfd1f399aa14edb05d24",
+        "size": 4347
+      },
+      {
+        "change": "A",
+        "path": "backend/app/schemas/competition_internal_consistency.py",
+        "sha256": "eb5234180381a2beb6597f85e698935f1805247502c45dc99acb646933bd80ca",
+        "size": 2604
+      },
+      {
+        "change": "A",
+        "path": "backend/app/schemas/internal_consistency.py",
+        "sha256": "e2ceb672b6707dfe11b4b4e8d28236b5e302eaa40844a1c50abe245b9bc3de6c",
+        "size": 20188
+      },
+      {
+        "change": "A",
+        "path": "backend/app/services/competition_internal_consistency_service.py",
+        "sha256": "14ad0b2621246b6dad61c2d0bc7094b29c709528ed9ddfb36548cc8d375935f4",
+        "size": 8938
+      },
+      {
+        "change": "A",
+        "path": "backend/app/services/review/internal_consistency_service.py",
+        "sha256": "cd67f6417b6d1e61d4f963e909d53480b3300454001b5097c1a5a2ba6f1b9235",
+        "size": 24907
+      },
+      {
+        "change": "M",
+        "path": "backend/app/static/competition/app.js",
+        "sha256": "ab73912fb6b93d8bd43591eeb9d158186bc674ddf0f12bdca713c1fe13334399",
+        "size": 24445
+      },
+      {
+        "change": "M",
+        "path": "backend/app/static/competition/index.html",
+        "sha256": "2000029ee4d13f188e651e2644d42da100c0fe0ff3f44e417df136c8fde6ac8e",
+        "size": 8039
+      },
+      {
+        "change": "M",
+        "path": "backend/app/static/competition/styles.css",
+        "sha256": "91607a15eb5fd5ed37d04d1279abe7fd1ac0680556197a088503067b3186171a",
+        "size": 18324
+      },
+      {
+        "change": "A",
+        "path": "backend/tests/fixtures/internal_consistency/case_d/.gitattributes",
+        "sha256": "088e49e76772881786858cf031a783db8bbfd216f14359986fca7daaad388188",
+        "size": 53
+      },
+      {
+        "change": "A",
+        "path": "backend/tests/fixtures/internal_consistency/case_d/a38da41d-3bb1-5cbb-8402-8d76545dfca9.pdf",
+        "sha256": "732c04c8d0ad282292ba0529af04bc0777c83e67d6a2c99cb606b7883d6764e9",
+        "size": 2514
+      },
+      {
+        "change": "A",
+        "path": "backend/tests/fixtures/internal_consistency/case_d/controlled-case-d.json",
+        "sha256": "c8b8fa92339e4a76f1a72fbcdf61f4d044610bb92ddcfe35f123888c3f33cd09",
+        "size": 1755
+      },
+      {
+        "change": "A",
+        "path": "backend/tests/test_internal_consistency_case_d_p2.py",
+        "sha256": "b6988b6bff757c5f0fef7c26554c8db0ace2d7be48bc558500913388b8d074e6",
+        "size": 9163
+      },
+      {
+        "change": "A",
+        "path": "backend/tests/test_internal_consistency_competition_p3.py",
+        "sha256": "0e3923be5414ab7f264b5b856c85cff7c562c7d807972540dbeb328dec10a678",
+        "size": 16663
+      },
+      {
+        "change": "A",
+        "path": "backend/tests/test_internal_consistency_d9.py",
+        "sha256": "205d8ab4a6b28eddd6b9cf05a9e131b8d8984752afb9bf5c45b83d6e438131c4",
+        "size": 29883
+      }
+    ]
   },
-  "acceptance": {
-    "root_redirect": "/competition/",
-    "health_http_status": 200,
-    "competition_http_status": 200,
-    "metadata_http_status": 200,
-    "metadata_status": "READY",
-    "plan_count": 2,
-    "case_count": 3,
-    "case_a": {
-      "item_kind": "FINDING",
-      "decision": "COMPLIANT",
-      "finding_id": "finding_993e8847b86de084c9d1942a9771bf3dab07200260499f7d38d00292060e818b"
+  "authority_generation_state": {
+    "deployment_commit_created_at_generation": false,
+    "deployment_parent": "c79162685537bc6cb408d77e8c1f91d52a3b161c",
+    "phase": "PRE_COMMIT_QUALIFICATION"
+  },
+  "deployment_only_material": {
+    "files": [
+      {
+        "path": ".dockerignore",
+        "sha256": "494cc8625044fff5a7d6ee8453f45fd9b23a6020e9d59512785bb5320ecf76da",
+        "size": 278
+      },
+      {
+        "path": "Dockerfile",
+        "sha256": "65f6fb6e1299bb3b41433ea95a85d8f6f2c5caace192930d9fde02eadd50db1d",
+        "size": 594
+      },
+      {
+        "path": "backend/competition_public_entry.py",
+        "sha256": "9c9bfc54f0ed4bba054f50062e98508003c85bfdeb2d58b72b77bdbd583a2385",
+        "size": 2331
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/articles.json",
+        "sha256": "756530a2c2fbd75b5950150e472597858e3facf39523334581061a6ba82e6c9b",
+        "size": 296287
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/chapters.json",
+        "sha256": "bbf0a9322067cd8d62c49061ca5b35b08d8f88a77b5419508104797136c0c6a1",
+        "size": 31154
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/metadata.json",
+        "sha256": "595f59fa6100fed58ae638a848cdf6feb26a4d4cb95fe4235ec7a44c2b7321c0",
+        "size": 2671
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/pages.json",
+        "sha256": "bc6ea11b3563fc4edea986a95bdca0dc3e2456c18ef1394c2b13181abacd918f",
+        "size": 223398
+      },
+      {
+        "path": "backend/data/uploads/04039d98-4131-422a-b29a-256bade04a6a.pdf",
+        "sha256": "41f4ea2e7d999f298309f4ecb25491cc79125d422cb84484963de36325166b95",
+        "size": 564678
+      },
+      {
+        "path": "backend/data/uploads/f42886ef-83ec-454c-86e2-34d5c238ca0f.pdf",
+        "sha256": "5f3ebde3bd2c0a6d6dccb516c3029fd336558e198ebeccad07d29ca0d03fd8dc",
+        "size": 15357238
+      }
+    ],
+    "preserved_file_count": 9,
+    "semantic_authority": false
+  },
+  "deployment_parent": {
+    "branch": "main",
+    "head": "c79162685537bc6cb408d77e8c1f91d52a3b161c"
+  },
+  "installed_standard": {
+    "runtime_files": [
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/articles.json",
+        "sha256": "756530a2c2fbd75b5950150e472597858e3facf39523334581061a6ba82e6c9b",
+        "size": 296287
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/chapters.json",
+        "sha256": "bbf0a9322067cd8d62c49061ca5b35b08d8f88a77b5419508104797136c0c6a1",
+        "size": 31154
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/metadata.json",
+        "sha256": "595f59fa6100fed58ae638a848cdf6feb26a4d4cb95fe4235ec7a44c2b7321c0",
+        "size": 2671
+      },
+      {
+        "path": "backend/data/standards/documents/55023b3b-1b00-4000-8000-000000000001/pages.json",
+        "sha256": "bc6ea11b3563fc4edea986a95bdca0dc3e2456c18ef1394c2b13181abacd918f",
+        "size": 223398
+      }
+    ],
+    "standard_id": "55023b3b-1b00-4000-8000-000000000001"
+  },
+  "inventory": {
+    "approved_deployment_override_count": 1,
+    "authority_file": {
+      "classification": "SELF-GENERATED DEPLOYMENT METADATA",
+      "counted_as_source_equivalent": false,
+      "path": "competition-deployment-authority.json"
     },
-    "case_b": {
-      "item_kind": "FINDING",
-      "decision": "NON_COMPLIANT",
-      "finding_id": "finding_530869523a03ddacf658e167fcff74f5b32b68f324533711a0b38538298f0c73",
-      "plan_value": "3 mm",
-      "normative_value": "2.5 mm",
-      "nearby_200_mm_authority": 0
+    "duplicate_logical_paths": 0,
+    "missing": 0,
+    "non_authority_file_count": 257,
+    "non_authority_inventory_sha256": "124224f9d6b09c65609efe60c8ebb2e4d8eb26cc8e72b2d6e33678fb162435e0",
+    "preserved_deployment_only_file_count": 9,
+    "self_generated_authority_file_count": 1,
+    "source_equivalent_file_count": 247,
+    "total_intended_file_count": 258,
+    "unexpected": 0
+  },
+  "plan_assets": [
+    {
+      "path": "backend/data/uploads/04039d98-4131-422a-b29a-256bade04a6a.pdf",
+      "sha256": "41f4ea2e7d999f298309f4ecb25491cc79125d422cb84484963de36325166b95",
+      "size": 564678
     },
-    "case_c": {
-      "item_kind": "REVIEW_GAP",
-      "terminal_class": "CANDIDATE_TERMINAL",
-      "terminal_status": "NO_STANDARD_SCOPE",
-      "finding": "ABSENT",
-      "comparison": "ABSENT",
-      "decision": "ABSENT",
-      "standard_article_requirement": "ABSENT"
-    },
-    "qualified_provenance_match": true,
-    "blocked_route_tests_passed": true,
-    "ocr_calls": 0,
-    "network_calls": 0,
-    "external_llm_calls": 0
-  }
+    {
+      "path": "backend/data/uploads/f42886ef-83ec-454c-86e2-34d5c238ca0f.pdf",
+      "sha256": "5f3ebde3bd2c0a6d6dccb516c3029fd336558e198ebeccad07d29ca0d03fd8dc",
+      "size": 15357238
+    }
+  ],
+  "public_wrapper": {
+    "case_d_route_compatibility": "ALREADY_COMPATIBLE",
+    "modified": false,
+    "path": "backend/competition_public_entry.py",
+    "sha256": "9c9bfc54f0ed4bba054f50062e98508003c85bfdeb2d58b72b77bdbd583a2385"
+  },
+  "qualified_source": {
+    "approved_deployment_overrides": [
+      {
+        "classification": "HUMAN-APPROVED DEPLOYMENT DOCUMENTATION",
+        "deployment_parent_base_sha256": "63d8ed933a34c783b4623a80234f1b51b00c96022304cd1061939b4cb6e3ce50",
+        "path": "README.md",
+        "reconstructed_sha256": "9493c580c2575ec868d12c404e64b6ab1264ab1e61076bae8d17d498894b1dc4",
+        "semantic_authority": false,
+        "source_blob_sha256": "7143358daf77ed6b6b8ac546b01b89ed900ceb77f51ca6f7bb7b087b03c5595d"
+      }
+    ],
+    "archive_method": "git -c core.autocrlf=false archive",
+    "head": "9b2575b26c1654730eebb05a4596f025218629f6",
+    "raw_git_blob_mismatches": 0,
+    "source_equivalent_file_count": 247,
+    "subject": "feat(competition): add internal consistency demo",
+    "tracked_file_count": 248
+  },
+  "schema_version": "competition-deployment-authority-v2"
 }

@@ -1,0 +1,40 @@
+{
+  "schema_version": "controlled-case-d-v1",
+  "case_id": "CASE-D",
+  "document_id": "a38da41d-3bb1-5cbb-8402-8d76545dfca9",
+  "asset_filename": "a38da41d-3bb1-5cbb-8402-8d76545dfca9.pdf",
+  "asset_sha256": "732c04c8d0ad282292ba0529af04bc0777c83e67d6a2c99cb606b7883d6764e9",
+  "asset_size_bytes": 2514,
+  "page_count": 2,
+  "classification": "CONTROLLED_SYNTHETIC",
+  "classification_zh": "受控合成演示案例",
+  "purpose": "INTERNAL_CONSISTENCY_DEMONSTRATION",
+  "presentation_notice": "此案例仅用于受控合成演示，不承载任何真实项目、工程缺陷或合规结论权威。",
+  "requires_ocr": false,
+  "requires_network": false,
+  "expected_source_texts": {
+    "1": "支护结构水平位移报警值为30 mm。",
+    "2": "支护结构水平位移报警值为20 mm。"
+  },
+  "expected_review": {
+    "fact_count": 2,
+    "candidate_count": 1,
+    "unresolved_count": 0,
+    "status": "INTERNAL_CONSISTENCY_CANDIDATE",
+    "relation": "DIFFERENT_VALUE",
+    "reason": "DIFFERENT_EXPLICIT_NUMERIC_VALUES",
+    "review_status": "NEEDS_HUMAN_REVIEW",
+    "object_profile": "SUPPORT_STRUCTURE",
+    "object_profile_id": "objectprofile_ace6c5ce26806961ddc12629ead232a4bb7761a8289c94f9ca75d92a0528102b",
+    "parameter_profile": "HORIZONTAL_DISPLACEMENT_ALARM_VALUE",
+    "parameter_profile_id": "parameterprofile_374c97483c9edcd901399076aee0598a0da37e7cad460dda2df2115b222c61d4",
+    "normalized_unit": "mm",
+    "assertion_class": "DECLARED_CONTROL_VALUE",
+    "distinct_values": [
+      "20",
+      "30"
+    ],
+    "candidate_id": "consistencycandidate_7887f2e54729711565854dd5eba57bfd1a2c34dffe23225e6e523e3d330b42b7",
+    "review_id": "consistencyreview_1b2d6e11c9e943972e6ae6a314ca23d656ad7276171970795f19bd5c028ac390"
+  }
+}
